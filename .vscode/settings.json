@@ -1,0 +1,23 @@
+{
+    "latex-workshop.bibtex-format.tab": "4 spaces",
+    "latex-workshop.chktex.enabled": true,
+    "latex-workshop.latex.clean.subfolder.enabled": true,
+    "latex-workshop.latex.outDir": "%DIR%/output",
+    "latex-workshop.view.pdf.trim": 2,
+    "editor.fontSize": 12,
+    "editor.wordWrapColumn": 100,
+    "editor.wordWrap": "wordWrapColumn",
+    "vim.textwidth": 100,
+    "latex-workshop.chktex.args.active": [
+        "-n22",
+        "-n30",
+        "-e16",
+        "-q"
+    ],
+    "latex-workshop.chktex.args.root": [
+        "-n22",
+        "-n30",
+        "-e16",
+        "-q"
+    ]
+}

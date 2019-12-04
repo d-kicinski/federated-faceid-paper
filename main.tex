@@ -13,6 +13,76 @@
     style=ieee
 ]{biblatex}
 \usepackage{csquotes}
+\usepackage{siunitx}
+
+\usepackage{algorithm}
+\usepackage[noend]{algorithmic}
+
+\newenvironment{polishalgorithm}[1][]
+  {\begin{algorithm}[#1]
+     \selectlanguage{polish}%
+     \floatname{algorithm}{Algorytm}%
+     \renewcommand{\algorithmicif}{\textbf{If}}%
+     \renewcommand{\algorithmicthen}{\textbf{then}}%
+     \renewcommand{\algorithmicend}{\textbf{end}}%
+  }
+  {\end{algorithm}}
+
+
+\newcommand{\mycaptionof}[2]{\captionof{#1}{#2}}
+
+
+\newcolumntype{H}{>{\setbox0=\hbox\bgroup}c<{\egroup}@{}}
+
+\newcommand{\noaistats}[1]{}  %
+
+% \definecolor{darkgreen}{rgb}{0,0.4,0.0}
+% \definecolor{darkblue}{rgb}{0,0.1,0.3}
+% \definecolor{darkred}{rgb}{0.7,0.0,0.0}
+
+\newcommand{\lbs}{\ensuremath{B}}      %
+\newcommand{\all}{\infty}
+\newcommand{\lepochs}{\ensuremath{E}}  %
+\newcommand{\clientfrac}{\ensuremath{C}}    %
+\newcommand{\tnn}{2NN\xspace} %
+\newcommand{\xx}{\hspace{-0.01in}\ensuremath{\times}}
+\newcommand{\loss}{\ell}
+\newcommand{\SUB}[1]{\ENSURE{} \hspace{-0.15in} \textbf{#1}}
+\newcommand{\algfont}[1]{\texttt{#1}}
+
+\renewcommand{\algorithmicensure}{}
+
+\newcommand{\fedavglong}{\algfont{FederatedAveraging}\xspace}
+\newcommand{\fedavg}{\algfont{FedAvg}\xspace}
+\newcommand{\fedavgshort}{\algfont{FedAvg}\xspace}
+
+\newcommand{\fedsgdlong}{\algfont{FederatedSGD}\xspace}
+\newcommand{\fedsgd}{\algfont{FedSGD}\xspace}
+\newcommand{\fedsgdshort}{\algfont{FedSGD}\xspace}
+
+\newcommand{\eqdef}{\overset{\text{def}}{=}}
+\newcommand{\T}{\rule{0pt}{2.2ex}}
+\newcommand{\targetTNN}{97\%\xspace}
+\newcommand{\targetCNN}{99\%\xspace}
+\newcommand{\targetLSTM}{54\%\xspace}
+\newcommand{\nc}{K}
+\newcommand{\pp}{\mathcal{P}}
+
+
+\newlength{\pw}
+
+
+\newcommand{\BO}{\mathcal{O}}
+\newcommand{\R}{\ensuremath{\mathbb{R}}}
+\newcommand{\qqand}{\qquad \text{and} \qquad}
+\newcommand{\qqwhere}{\qquad \text{where} \qquad}
+\newcommand{\qqwith}{\qquad \text{with} \qquad}
+\DeclareMathOperator*{\E}{\mathbb{E}}
+\newcommand{\grad}{\triangledown}
+\newcommand{\h}{\frac{1}{2}}
+
+
+
 
 \graphicspath{{img/}}             % Katalog z obrazkami.
 \addbibresource{bibliografia.bib} % Plik .bib z bibliografią
@@ -29,6 +99,9 @@
 \newtheorem{axiom}{Aksjomat}
 \newtheorem{assumption}{Założenie}
 
+
+
+
 %----------------------------------------
 % Spis rysunków, tablic i załączników;
 % tutaj ew. tłumaczymy te terminy
@@ -42,10 +115,12 @@
 
 \begin{document}
 
+\renewcommand{\ALG@name}{Algorytm}
+
 %--------------------------------------
 % Strona tytułowa
 %--------------------------------------
-\EngineerThesis % dla pracy inżynierskiej mamy \EngineerThesis
+\EngineerThesis{} % dla pracy inżynierskiej mamy \EngineerThesis
 \instytut{Automatyki i Informatyki Stosowanej}
 \kierunek{Automatyka i Robotyka}
 
@@ -60,45 +135,46 @@
 \album{277115}
 \promotor{mgr Maciej Stefańczyk}
 \date{\the\year}
-\maketitle
+% \maketitle
 
 %--------------------------------------
 % Streszczenie po polsku
 %--------------------------------------
-\streszczenie \lipsum[1-3]
-\slowakluczowe XXX, XXX, XXX
-\newpage
+% \streszczenie \lipsum[1-3]
+% \slowakluczowe XXX, XXX, XXX
+% \newpage
 
 %--------------------------------------
 % Streszczenie po angielsku
 %--------------------------------------
-\abstract \kant[1-3]
-\keywords XXX, XXX, XXX
-\newpage
+% \abstract \kant[1-3]
+% \keywords XXX, XXX, XXX
+% \newpage
 
 %--------------------------------------
 % Oświadczenie o autorstwie
 %--------------------------------------
-\makeauthorship
-\blankpage
+% \makeauthorship
+% \blankpage
 
 %--------------------------------------
 % Spis treści
 %--------------------------------------
 \thispagestyle{empty}
 \tableofcontents
-\blankpage
+\blankpage{}
 
 %--------------------------------------
 % Rozdziały
 %--------------------------------------
-\input{tex/thesis.tex}
+
+\input{body.tex}
 
 %--------------------------------------------
 % Literatura
 %--------------------------------------------
 \newpage
-\printbibliography
+\printbibliography{}
 
 %--------------------------------------------
 % Spisy (opcjonalne)
@@ -118,22 +194,22 @@
 \acronym{EiTI}{Wydział Elektroniki i Technik Informacyjnych}
 \acronym{PW}{Politechnika Warszawska}
 
-\listoffigures              % Spis obrazków. 
-\vspace{1cm}                % vertical space
-\listoftables               % Spis tabel. 
-\vspace{1cm}                % vertical space
-\listofappendices           % Spis załączników
+% \listoffigures              % Spis obrazków. 
+% \vspace{1cm}                % vertical space
+% \listoftables               % Spis tabel. 
+% \vspace{1cm}                % vertical space
+% \listofappendices{}           % Spis załączników
 
 % Załączniki
-\appendix
+% \appendix
 
-\newpage
-\newappendix{Nazwa załącznika 1}
-\lipsum[1]
+% \newpage
+% \newappendix{Nazwa załącznika 1}
+% \lipsum[1]
 
-\newpage
-\newappendix{Nazwa załącznika 2}
-\lipsum[1]
+% \newpage
+% \newappendix{Nazwa załącznika 2}
+% \lipsum[1]
 
 % Używając powyższych spisów jako szablonu,
 % możesz tu dodać swój własny wykaz bądź listę, 
