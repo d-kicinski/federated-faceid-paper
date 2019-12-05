@@ -9,5 +9,69 @@ Weryfikacja twarzy jest zadaniem przyrównania twarzy
 kandydata to innej, i weryfikacja czy nastąpiło ich dopasowanie. Jest to mapowanie
 jeden-do-jednego: należy sprawdzić czy jest to ta sama osoba.
 
-\subsubsection{Procedura weryfikacji} \subsubsection{Ekstraktor cech}
+\subsubsection{Procedura weryfikacji} 
+
+\subsubsection{Ekstraktor cech}
+tutaj opisz jaki jest pipeline  
+wchodzi zdjęcie i wychodzi embedding
+
+\subsubsection{Zbiory danych}
+Są jakieś zbiory daych 
+1) VggFace2
+2) MS1M
+3) MegaFace
+4) LWF
+
+Ze względu na popularność dwóch ostatnich zbiorów w ewaluacji systemów rozpoznających twarze zostaną one właśnie wykorzystane do ewaluacji, a dwa pierwsze tylko do treningu.
+
+
+\subsubsection{Metody weryikacji twarzy}
+Wyjściem z modelu jest wektor(embedding), który pozwala na odróżnienie jednej twarzy od drugiej za pomocą porównanie 
+embedingPapier googla twierdzi ze udało im sie uzyskać dobry score jednak nie rzadne inne prace nie raportują sukcesywngeo otrzymania podobnego wyniku. Może to wynikać z 1) braku zbliżonego wielkością zbioru danych użytych do uzyskania wyniku raportowangeo przez googla  2) brakiem podobnych zasobów obliczeniowychu jednej twarzy do embedingu drugiej twarzy.
+Coś o tym, że są tak jakby dwie rodziny algorytmów. Jedna bazująca na klasycznym podjeściu stosowanym podczas klasyfikacji obrazów i druga bazująca na optymalizacji multi-class classiication hindge loss(jak to do uja wafla przetłumaczyć?).
+
+Papier googla twierdzi ze udało im sie uzyskać dobry score jePapier googla twierdzi ze udało im sie uzyskać dobry score jednak nie rzadne inne prace nie raportują sukcesywngeo otrzymania podobnego wyniku. Może to wynikać z 1) braku zbliżonego wielkością zbioru danych użytych do uzyskania wyniku raportowangeo przez googla  2) brakiem podobnych zasobów obliczeniowychdnak nie rzadne inne prace nie raportują sukcesywngeo otrzymania podobnego wyniku. Może to wynikać z 1) braku zbliżonego wielkością zbioru danych użytych do uzyskania wyniku raportowangeo przez googla  2) brakiem podobnych zasobów obliczeniowych
+
+\paragraph{Tripletloss}
+jest o wiele lepszy dla zastosowań federated learningu
+procedura trenowania
+
+
+\paragraph{Classification loss}
+Pokazać że jest kilka rodzajów takich lossów
+1) Centre loss
+2) Cosine loss
+3) Arc loss
+
+
+
+\paragraph{Implementacja}
+Papier googla twierdzi ze udało im sie uzyskać dobry score jednak zadne inne prace nie
+raportują sukcesywngeo otrzymania podobnego wyniku. Może to wynikać z 1) braku zbliżonego
+wielkością zbioru danych użytych do uzyskania wyniku raportowangeo przez googla 2) brakiem
+podobnych zasobów obliczeniowych
+
+Pomimo
+
+Została podjęta próba implementacji wytrenowania modelu stosując w.w.y metodę wykorzystując zbiór danych VggFace2. 
+
+W celach pokazania, że implementacja jest poprawna porównujemy następujące modele
+
+Porównanie:
+ triplet(google report), centre(google report) wytrenowanych na danych prywatnych
+ triplet(own), centre(external source) wytrenowanych na VggFace2
+-> wyjdzie, że triplet loss jest o wiele mniej skuteczna 
+
+
+\subsubsection{Rozporszona weryfikacja twarzy}
+porównanie:
+
+globalny model arcface uczony na ms1m,   testowany na lwf i megaface
+globalny model arcface uczony na ms1m, dotrenowany tripletem na VggFace2, testowany
+
+
+globalny model arcface dotrenowanie na lwf ale negatywne przykłady samplujemy z generatora
+globalny model arcface dotrenowanie na megaface ale negatywne przykłady samplujemy z generatora
+
+
 
