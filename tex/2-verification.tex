@@ -51,22 +51,31 @@ raportują sukcesywngeo otrzymania podobnego wyniku. Może to wynikać z 1) brak
 wielkością zbioru danych użytych do uzyskania wyniku raportowangeo przez googla 2) brakiem
 podobnych zasobów obliczeniowych
 
-Pomimo
-
 Została podjęta próba implementacji wytrenowania modelu stosując w.w.y metodę wykorzystując zbiór danych VggFace2. 
 
 W celach pokazania, że implementacja jest poprawna porównujemy następujące modele
 
 Porównanie:
- triplet(google report), centre(google report) wytrenowanych na danych prywatnych
+dwa poejścia: dwa datasety, modele niekoniecznie moje ale testowane na własnej ewaluacji
+
+ triplet(google report), wytrenowanych na danych prywatnych
  triplet(own), centre(external source) wytrenowanych na VggFace2
+ triplet(own), centre(external source) wytrenowanych na MS1m
 -> wyjdzie, że triplet loss jest o wiele mniej skuteczna 
+
+see this:
+https://arxiv.org/pdf/1901.08616.pdf
+https://arxiv.org/pdf/1709.02940.pdf
+
 
 
 \subsubsection{Rozporszona weryfikacja twarzy}
 porównanie:
 
-globalny model arcface uczony na ms1m,   testowany na lwf i megaface
+centre loss ms1m
+
+
+globalny model arcface uczony na ms1m, testowany na lwf i megaface
 globalny model arcface uczony na ms1m, dotrenowany tripletem na VggFace2, testowany
 
 
