@@ -22,7 +22,12 @@ Są jakieś zbiory daych
 3) MegaFace
 4) LWF
 
-Ze względu na popularność dwóch ostatnich zbiorów w ewaluacji systemów rozpoznających twarze zostaną one właśnie wykorzystane do ewaluacji, a dwa pierwsze tylko do treningu.
+Sprawdzić wpływ datasetu początkowego na wyniki ewaluacji początkowego modelu globalego
+
+ms1m do pre trengowania ponieważ posiada duża różnorodność twarzy oraz ogólną duża liczbe przykładów trenujących. VggFace2 zostonie z koleji wykorzystany do koncowego dotreniowania modelu - ze względu na dużą liczę zdjec przypadajaca na jedna osobę posiada dużą różnorodność wewnątrzklasową co powinno zwięszyć finałową wfektywaność podelu - większa odporność na rotację twarzy względem obiektywu, zmienne wartunki świetlne itp.
+
+Ze względu na popularność dwóch ostatnich zbiorów w ewaluacji systemów rozpoznających twarze zostaną one właśnie wykorzystane do ewaluacji, MegaFace ma tę dodatkową zaletę, dużej liczby osób, a dwa pierwsze tylko do treningu.
+
 
 
 \subsubsection{Metody weryikacji twarzy}
