@@ -1,16 +1,7 @@
 \newpage
 
-\input{tex/0-wstep.tex}
-\input{tex/1-federated.tex}
+\input{tex/0-intro.tex}
+\input{tex/1-general.tex}
 \input{tex/2-verification.tex}
-rozporoszonej optymalizacji:
-\begin{itemize}
-
-\item \textbf{Non-IID} Dane trenujące on danym urządzniu są zazwyczaj zależne od konkretnego użytkownika i dlatego lokalny zbiór danych zebrany na dowolnym urządzeniu nie będzie reprezentatywny w stosunku do dystrybucji całej populacji
-\item \textbf{Niezbalansowany} Podobnie, niektórzy urzytkownicy będą o wiele częściej korzystali z aplikacji aparatu niż inni, co będzie prowadziło do różnic w wielkości zebranych lokalnych zbiorów  danych trenujących.
-\item \textbf{Masywnie rozporszony} Spodziewa się, że liczba finalnych użytkowników biorąca udział w optymalizacji będzie większa niż średnia liczba przykładów trenujących przypadająca na jednego klienta.
-\item \textbf{Ograniczona komunikacja} Urządznia IoT są pomimo założenia, że mają dostęp do
-internetu mogą być ograniczone wolnym albo kosztownym łączem sieciowym.
-\end{itemize}
-
-W tej pracy główna uwaga zostanie poświęcona na rozwiązanie doprowadznie systemu do działania w środowisku danych Non-IID oraz ograniczonej komunkiacji.
+\input{tex/3-federated.tex}
+\input{tex/4-summary.tex}
