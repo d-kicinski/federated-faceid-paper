@@ -1,0 +1,79 @@
+% User verification
+% - Biometria twarzy
+% - Ogólna procedura weryfikacji 
+% - Przetwarzanie wstępne 
+% - Neuronowy extractor cech
+%   * Klasyfikacja
+%   * Triplet loss
+%       - Negative examples sampling
+% - Implementacja
+
+
+\section[verification]{System weryfikacji użytkownika za pomocą biometrii twarzy}
+
+\subsection{Biometria twarzy}
+
+twarz nadaje się do weryfikacji; przykłady systemów weryfikacji?
+
+\subsection{Procedura weryfikacji przy wykorzystaniu sieci neuronowych} 
+
+Weryfikacja twarzy jest zadaniem przyrównania twarzy
+kandydata to innej, i weryfikacja czy nastąpiło ich dopasowanie. Jest to mapowanie
+jeden-do-jednego: należy sprawdzić czy jest to ta sama osoba.
+
+Mając na wejściu naszego systemu dwa zdjęcia \(x_i\) oraz \(x_j\) wynik weryfikacji będzie wyznaczany następująco:
+
+\begin{align}\label{eq:ekstraktor_weryfikacja}
+\text{weryfikacja jest}\begin{cases}
+    \text{pozytywna},& \text{jeśli } d(f(x_i), f(x_j) < \alpha \\
+    \text{negatywna},              & \text{w.p.p}
+\end{cases}
+\end{align}
+
+gdzie \(f(x)\) jest wektorem cech obrazu \(x\), opisanym w sekcji
+\ref{sec:ekstraktor}, \(\alpha\) jest marginesem, \(d(f_1, f_2)\) jest pewną funkcją dystansu liczoną pomiędzy wektorami \(f_1\), \(f_2\).
+
+\subsection{Wstępne przetwarzanie obrazu}
+
+\subsection{Neuronowy ekstraktor cech} \label{sec:ekstraktor}
+We współczesnych systemach weryfikacji wykorzystuje się głębokie sieci konwolucyjne. W
+szczegółach zostaną omówione używana przez nas architektura w sekcji XXX. Pomijając szczegóły
+modelu i traktując go jako czarną skrzynkę ogólna idea ekstraktora została pokazana na Rysunku
+\ref{fig:ekstraktor_cech}. Głównym założeniem jest stworzenie systemu end-to-end, którego
+rezultatem działania będzie embedding \(f(x)\), wyznaczony z obrazu wejściowego \(x\) przez
+rzutowanie go do pewnej przestrzeni cech \(\mathbb{R}^d\), w taki sposób, że pewna funkcja
+odległości wyznaczona dla wszystkich zdjęć twarzy jest mała dla twarzy należących do tych samych
+osób i duża dla różnych twarzy. 
+
+\begin{figure}[h]
+    \centering
+    \includegraphics[width=0.75\textwidth]{2-0_verification_ekstraktor_cech_drawio.pdf}
+    \caption{\textbf{Struktura ekstraktora cech.} Ekstraktor składa się z wejścia, które w ogólnym przypadku może być paczką \(B\) przetworzonych wstępnie obrazów twarzy o wymiarach \( W \times H \times C\), głębokiej sieci konwolucyjnej i następującej po niej warstwie normalizacji. W rezultacie na wyjściu otrzymujemy \(B\) wektorów cech o wymiarach \(D\).}
+    \label{fig:ekstraktor_cech}
+\end{figure}
+
+
+
+
+
+W literaturze można znaleźć dwie rodziny algorytmów, jedna wzorująca się na klasycznym podejściu
+stosowanym podczas klasyfikacji obrazów i druga bazująca na optymalizacji multi-class
+classification hinge loss (po pl?).
+
+
+\paragraph{Classification loss}
+Pokazać że jest kilka rodzajów takich funkcji
+1) Centre loss
+2) Cosine loss
+3) Arc loss
+
+\paragraph{Tripletloss}
+jest o wiele lepszy dla zastosowań federated learningu
+procedura trenowania
+
+\begin{align}\label{eq:triplet_dystant}
+    \left\Vert f(x_i) - f(x_j) \right\Vert_q^p < \alpha
+\end{align}
+
+
+
