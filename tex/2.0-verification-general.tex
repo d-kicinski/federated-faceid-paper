@@ -11,7 +11,7 @@
 
 \section[verification]{System weryfikacji użytkownika za pomocą biometrii twarzy}
 
-\subsection{Biometria twarzy}
+\subsection{Komercyjne systemy weryfikacji twarzy}
 
 \subsection{Procedura weryfikacji przy wykorzystaniu sieci neuronowych} 
 
@@ -19,7 +19,7 @@ Weryfikacja twarzy jest zadaniem przyrównania twarzy kandydata
 do innej i sprawdzenie czy nastąpiło ich dopasowanie. Jest to mapowanie
 jeden-do-jednego: należy sprawdzić czy jest to ta sama osoba.
 
-Mając na wejściu naszego systemu dwa zdjęcia \(x_i\) oraz \(x_j\) wynik weryfikacji będzie wyznaczany następująco:
+Mając na wejściu systemu dwa zdjęcia \(x_i\) oraz \(x_j\) wynik weryfikacji będzie wyznaczany następująco:
 
 \begin{align}\label{eq:ekstraktor_weryfikacja}
 \text{weryfikacja jest}\begin{cases}
@@ -29,9 +29,38 @@ Mając na wejściu naszego systemu dwa zdjęcia \(x_i\) oraz \(x_j\) wynik weryf
 \end{align}
 
 gdzie \(f(x)\) jest wektorem cech obrazu \(x\), opisanym w sekcji
-\ref{sec:ekstraktor}, \(\alpha\) jest marginesem, \(d(f_1, f_2)\) jest pewną funkcją dystansu liczoną pomiędzy wektorami \(f_1\), \(f_2\).
+\ref{sec:ekstraktor}, \(\alpha\) jest marginesem, \(d(f_1, f_2)\) jest pewną funkcją dystansu liczoną pomiędzy wektorami wyznaczanymi przez \(f(x)\).
 
 \subsection{Wstępne przetwarzanie obrazu}
+\subsubsection{Normalizacja obrazu}
+
+\subsubsection{Normalizacja pozy}
+
+\begin{figure}[H]
+    \begin{center}
+    \renewcommand\tabcolsep{1pt}
+    {\bf Poprawna detekcja}
+    \begin{tabular}{cc||cc||cc}
+      \includegraphics[width=.15\linewidth]{img/crop_examples/before/good/Al_Gore_0007.jpg} &
+      \includegraphics[width=.15\linewidth]{img/crop_examples/after/good/Al_Gore_0007.jpg} &
+      \includegraphics[width=.15\linewidth]{img/crop_examples/before/good/Jennifer_Lopez_0021.jpg} &
+      \includegraphics[width=.15\linewidth]{img/crop_examples/after/good/Jennifer_Lopez_0021.jpg} &
+      \includegraphics[width=.15\linewidth]{img/crop_examples/before/good/Lech_Walesa_0002.jpg} &
+      \includegraphics[width=.15\linewidth]{img/crop_examples/after/good/Lech_Walesa_0002.jpg} \\
+    \end{tabular}
+    {\bf Niepoprawna detekcja}
+    \begin{tabular}{cc||cc||cc}
+      \includegraphics[width=.15\linewidth]{img/crop_examples/before/bad/Jennifer_Lopez_0020.jpg} &
+      \includegraphics[width=.15\linewidth]{img/crop_examples/after/bad/Jennifer_Lopez_0020.jpg} &
+      \includegraphics[width=.15\linewidth]{img/crop_examples/before/bad/Vladimir_Putin_0031.jpg} &
+      \includegraphics[width=.15\linewidth]{img/crop_examples/after/bad/Vladimir_Putin_0031.jpg} &
+      \includegraphics[width=.15\linewidth]{img/crop_examples/before/bad/Vladimir_Putin_0040.jpg} &
+      \includegraphics[width=.15\linewidth]{img/crop_examples/after/bad/Vladimir_Putin_0040.jpg} \\
+    \end{tabular}
+    \end{center}
+    \caption{{\bf Przykłady działania ekstraktora twarzy.} Pokazane zostały tutaj wybrane przykłady prezentujące działanie ekstraktora twarzy.}
+    \label{fig:ekstraktor_twarzy}
+    \end{figure}
 
 \subsection{Neuronowy ekstraktor cech} \label{sec:ekstraktor}
 We współczesnych systemach weryfikacji wykorzystuje się głębokie sieci konwolucyjne. W
@@ -51,27 +80,30 @@ osób i duża dla różnych twarzy.
 \end{figure}
 
 
+W literaturze można znaleźć dwie rodziny algorytmów trenujących, jedna wzorująca się na
+klasycznym podejściu stosowanym podczas treningu klasyfikatorów obrazów. Najnowsze podejścia z
+tej rodziny algorytmów prezentujemy w sekcji \ref{sec:klasyfikatory}. Drugi rodzaj algorytmów
+bazują na optymalizacji multi-class classification hinge loss (po pl?). Opisujemy je w
+szczegółach w sekcji \ref{sec:tripletloss}
+
+\subsubsection{Klasyfikacja twarzy}\label{sec:klasyfikatory}
+\begin{figure}[h!]
+\centering
+\includegraphics[width=1\linewidth]{img/margincompare.png}
+\caption{Porównanie marginesów decyzyjnych\cite{}}
+\vspace{-4mm}
+\label{fig:binarymargin}
+\end{figure}
+\paragraph{Softmax\cite{Centreloss}}
+\paragraph{SphereFace}
+\paragraph{CosFace\cite{Cosface}}
+\paragraph{ArcFace\cite{Arcface}}
 
 
-
-W literaturze można znaleźć dwie rodziny algorytmów, jedna wzorująca się na klasycznym podejściu
-stosowanym podczas klasyfikacji obrazów i druga bazująca na optymalizacji multi-class
-classification hinge loss (po pl?).
-
-
-\paragraph{Classification loss}
-Pokazać że jest kilka rodzajów takich funkcji
-1) Centre loss
-2) Cosine loss
-3) Arc loss
-
-\paragraph{Tripletloss}
-jest o wiele lepszy dla zastosowań federated learningu
-procedura trenowania
-
-\begin{align}\label{eq:triplet_dystant}
-    \left\Vert f(x_i) - f(x_j) \right\Vert_q^p < \alpha
-\end{align}
+\subsubsection{FaceNet}\label{sec:tripletloss}
+% \begin{align}\label{eq:triplet_dystant}
+    % \left\Vert f(x_i) - f(x_j) \right\Vert_q^p < \alpha
+% \end{align}
 
 
 

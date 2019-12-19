@@ -116,7 +116,8 @@ Fazy selekcji i raportowania są dospecyfikowane przez zestaw parametrów. Podcz
   neuronowych i algorytmów uczących został wykorzystany framework
   PyTorch~\cite{paszke2017automatic}. Poprawność implementacji została sprawdzona na zadaniu klasyfikacji obrazów wykorzystując prostą sieć konwolucyjną oraz popularny zbiór danych CIFAR10. 
 
-  \paragraph{Sieć konwolucyjna}
+  \subsection{Implementacja optymalizacji FL}
+  \subsubsection{Sieć konwolucyjna}
 
   Jako obiekt treningu omawianego algorytmu zastała użyta niewielka sieć neuronowa zawierająca
   dwie warstwy konwolucyjną z filtrami o szerokości 5x5 (pierwsza z 32 kanałami, druga z 64, po
@@ -124,22 +125,22 @@ Fazy selekcji i raportowania są dospecyfikowane przez zestaw parametrów. Podcz
   końcu warstwa przekształcenia liniowego, co daje w sumie \(10^6\) miliona parametrów. Model został podsumowany w tabeli 
 
 
+  \subsubsection{Zbiory danych}
   \paragraph{CIFAR10}
-
   CIFAR10 jest popularnym syntetycznym zbiorem danych. Zbiór danych składa się z \(\num{60000}\)
   kolorowych obrazów podzielonych na \(\num{10}\) klas, z \(\num{6000}\) obrazami przypadającymi
-  na jedną klasę. Zawarte są w nim obrazy o szerokości i wysokości 32 pikseli. Standordowo zbiór
+  na jedną klasę. Zawarte są w nim obrazy o szerokości i wysokości 32 pikseli. Standardowo zbiór
   dzieli się na dwa zbalansowane klasowo podzbiory: testowy i treningowy zawierających odpowiednio
   \(10000\) i \(50000\) etykietowanych przykładów. Na rysunku~\ref{fig:cifar10_example} znajduje się 10 losowo wybranych obrazów, dla każdej z 10 klas.
 
-  \begin{figure}[t]
+  \begin{figure}[h]
     \centering
     \includegraphics[width=1.0\textwidth]{img/cifar10_example.png}
     \mycaptionof{figure}{10 przykładowych obrazów dla każdej z \(\num{10}\) klas zbioru CIFAR10}
     \label{fig:cifar10_example}
   \end{figure}
 
-  \paragraph{Protokół treningowy}
+  \subsubsection{Protokół treningowy}
 
   Do sprawdzenia poprawności implementacji została zaimplementowana procedura treningowa wzorowana
   na~\cite{mcmahan2016communicationefficient}. Zbiór treningowy został podzielony pomiędzy 100 użytkowników tak żeby każdy zawierał po 500 przykładów trenujących. Z powodu braku naturalnego podziału danych na tak dużą liczbę klientów rozważany jest tutaj nieco mniej wymagający przypadek, w którym dane każdego użytkowania są zbalansowane oraz równomiernie rozdystrybuowane.
@@ -153,4 +154,77 @@ Fazy selekcji i raportowania są dospecyfikowane przez zestaw parametrów. Podcz
   Zaimplementowany algorytm został porównany do standardowego algorytmu SGD (cytat).
 
 
-  \paragraph{Ewaluacja}
+  \subsubsection{Ewaluacja}
+% \newcommand{\acc}[1]{\multicolumn{2}{c}{#1\%}}
+\begin{table}[h]\label{table:cifar}
+  \begin{center}
+  \begin{tabular}{ccc}
+    \hline
+    Acc.     &   80\%  & 82\% \\
+    \hline
+    \algfont{SGD}  & 18000  & 31000 \\
+    \fedavg     &   280~(64.3\xx) & 630~(49.2\xx) \\
+    \hline
+    \algfont{SGD}-nasz  & 20500 & 45000 \\
+    \fedavg-nasz    &   510~(40.2\xx) & 1200~(37.5\xx) \\
+    \hline
+  \end{tabular}
+\end{center}
+  \mycaptionof{table}{Liczba aktualizacji modelu globalnego i przyspieszenie względem podstawowego SGD potrzebna do otrzymania zadanej dokładności (Acc) na testowym zbiorze CIFAR10.}
+\end{table}
+
+
+  \section{Protokołu treningowy FL do zadania weryfikacji twarzy}
+  \subsection{Protokół treningowy}
+
+  \subsection{Generowanie przykładów negatywnych}
+  \subsubsection{StyleGAN}
+  \subsubsection{Przykładowe twarze}
+\begin{figure}[H]
+    \begin{center}
+    \renewcommand\tabcolsep{1pt}
+    \begin{tabular}{ccc}
+      \includegraphics[width=.3\linewidth]{img/gen/1.png} &
+      \includegraphics[width=.3\linewidth]{img/gen/2.png} &
+      \includegraphics[width=.3\linewidth]{img/gen/3.png} \\
+      \includegraphics[width=.3\linewidth]{img/gen/4.png} &
+      \includegraphics[width=.3\linewidth]{img/gen/5.png} &
+      \includegraphics[width=.3\linewidth]{img/gen/6.png} \\
+      \includegraphics[width=.3\linewidth]{img/gen/7.png} &
+      \includegraphics[width=.3\linewidth]{img/gen/8.png} &
+      \includegraphics[width=.3\linewidth]{img/gen/9.png} \\
+    \end{tabular}
+    \end{center}
+    \caption{{\bf Przykłady działania generatora twarzy.}}
+    \label{fig:generator_twarzy}
+    \end{figure}
+
+
+
+
+  \subsection{Zbiory danych}
+  \begin{table}[H]
+  \begin{center}
+  \begin{tabular}{ccccc}
+  \hline
+  Zbiór danych  & \# osób   &   \# zdjęć  &   \# zdjęć na osobę   &   aligned \\
+  \hline
+  MS1M-DeepGlint \cite{glintweb}   & 87K  & 3.9M & ?/44.8/? & Tak \\
+  \hline
+  \hline
+  VGGFace2-test-train   & 500 & 163.3K & ?/361/? & Nie  \\
+  StyleGAN-0.7   & 1M & 1M & 1 & Nie  \\
+  \hline
+  \hline
+  VGGFace2-test-test    & 500 & 18.1K & ?/361/? & Nie  \\
+  \hline
+  \end{tabular}
+  \end{center}
+  \caption{\textbf{Zbiory danych} MS1M-DeepGlint posłuży do wytrenowania ekstraktora cech, a VGGFace2-test po podzieleniu do treningu oraz testowania treningu FL.} \label{table:dataset-FL}
+  \vspace{-4mm}
+  \end{table}
+
+
+  \subsection{Eksperymenty}
+  \subsubsection{Metoda pre-treningu modelu}
+  \subsubsection{Online Hard sample mining}

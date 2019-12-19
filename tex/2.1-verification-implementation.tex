@@ -1,86 +1,60 @@
-% User verification
-% - Biometria twarzy
-% - Ogólna procedura weryfikacji 
-% - Przetwarzanie wstępne 
-% - Neuronowy extractor cech
-%   * Klasyfikacja
-%   * Triplet loss
-%       - Negative examples sampling
-% - Implementacja
+%  Implementacja
+% - datasets
+
 
 \subsection{Implementacja systemu weryfikacji twarzy}
 
-\paragraph{Zbiory danych}
-Są jakieś zbiory daych 
-1) VggFace2
-2) MS1M
-3) MegaFace
-4) LWF
+\subsubsection{Zbiory danych}
 
-Sprawdzić wpływ datasetu początkowego na wyniki ewaluacji początkowego modelu globalego
+W literaturze znajduje się duża liczba zbiorów do treningu ekstraktorów cech twarzy(cytaty).
+Popularnym wyborem jest zbiór MS1M, posiada on duża różnorodność twarzy oraz duża liczbę
+przykładów trenujących. VggFace2 jest relatywnie nowym zbiorem i nie tak popularnym jak poprzedni
+ale cechuje się nie tylko dużym rozmiarem ale i dużą różnorodnością wewnątrz-klasową.
 
-ms1m do pre trengowania ponieważ posiada duża różnorodność twarzy oraz ogólną duża liczbe przykładów trenujących. VggFace2 zostonie z koleji wykorzystany do koncowego dotreniowania modelu - ze względu na dużą liczę zdjec przypadajaca na jedna osobę posiada dużą różnorodność wewnątrzklasową co powinno zwięszyć finałową wfektywaność podelu - większa odporność na rotację twarzy względem obiektywu, zmienne wartunki świetlne itp.
-
-Ze względu na popularność dwóch ostatnich zbiorów w ewaluacji systemów rozpoznających twarze zostaną one właśnie wykorzystane do ewaluacji, MegaFace ma tę dodatkową zaletę, dużej liczby osób, a dwa pierwsze tylko do treningu.
+LFW jest jest niejako standardem w testowaniu systemów do weryfikacji, jednak ze względu na jego niewielkie rozmiary i niską różnorodność wewnątrz-klasową nie będzie odpowiedni do testowania systemu opartego o FL dlatego jego zastosowanie ograniczymy do walidacji pre-trenowanych  modeli trenowanych w tradycyjnym sposobem na serwerze.
 
 
 
-\subsubsection{Metody weryikacji twarzy}
-Wyjściem z modelu jest wektor(embedding), który pozwala na odróżnienie jednej twarzy od drugiej za pomocą porównanie 
-embedingPapier googla twierdzi ze udało im sie uzyskać dobry score jednak nie rzadne inne prace nie raportują sukcesywngeo otrzymania podobnego wyniku. Może to wynikać z 1) braku zbliżonego wielkością zbioru danych użytych do uzyskania wyniku raportowangeo przez googla  2) brakiem podobnych zasobów obliczeniowychu jednej twarzy do embedingu drugiej twarzy.
-Coś o tym, że są tak jakby dwie rodziny algorytmów. Jedna bazująca na klasycznym podjeściu stosowanym podczas klasyfikacji obrazów i druga bazująca na optymalizacji multi-class classiication hindge loss(jak to do uja wafla przetłumaczyć?).
+\begin{table}[h]
+\begin{center}
+\begin{tabular}{c|c|c|c|c}
+\hline
+Zbiór danych  & \# osób   &   \# zdjęć  &   \# zdjęć na osobę   &   aligned \\
+\hline
+VGGFace2-train \cite{Cao18}     & 9.1K & 3.3M & 80/362.6/843 & Nie  \\ 
+MS1M-DeepGlint \cite{glintweb}   & 87K  & 3.9M & ?/44.8/? & Tak \\
+\hline
+%  Walidacja  & \# osób   &   \# zdjęć  &   \# zdjęć na osobę   &   aligned \\
+\hline
+LFW \cite{LFWTechUpdate}   & 5,749  & 13,233 & 1/2.3/530 & Nie \\
+\hline
+\end{tabular}
+\end{center}
+\caption{\textbf{Zbiory danych}.}
+\label{table:dataset}
+\vspace{-4mm}
+\end{table}
 
-Papier googla twierdzi ze udało im sie uzyskać dobry score jePapier googla twierdzi ze udało im sie uzyskać dobry score jednak nie rzadne inne prace nie raportują sukcesywngeo otrzymania podobnego wyniku. Może to wynikać z 1) braku zbliżonego wielkością zbioru danych użytych do uzyskania wyniku raportowangeo przez googla  2) brakiem podobnych zasobów obliczeniowychdnak nie rzadne inne prace nie raportują sukcesywngeo otrzymania podobnego wyniku. Może to wynikać z 1) braku zbliżonego wielkością zbioru danych użytych do uzyskania wyniku raportowangeo przez googla  2) brakiem podobnych zasobów obliczeniowych
 
-\paragraph{Tripletloss}
-jest o wiele lepszy dla zastosowań federated learningu
-procedura trenowania
-
-
-\paragraph{Classification loss}
-Pokazać że jest kilka rodzajów takich lossów
-1) Centre loss
-2) Cosine loss
-3) Arc loss
-
-
-
-\paragraph{Implementacja}
 Papier googla twierdzi ze udało im sie uzyskać dobry score jednak zadne inne prace nie
-raportują sukcesywngeo otrzymania podobnego wyniku. Może to wynikać z 1) braku zbliżonego
-wielkością zbioru danych użytych do uzyskania wyniku raportowangeo przez googla 2) brakiem
-podobnych zasobów obliczeniowych
+raportują skutecznego otrzymania podobnych rezultatów. Może to wynikać
+\begin{itemize}
+    \item braku zbliżonego wielkością zbioru danych użytych do uzyskania raportowanych wyników
+    \item brakiem podobnych zasobów obliczeniowych
+\end{itemize}
 
 Została podjęta próba implementacji wytrenowania modelu stosując w.w.y metodę wykorzystując zbiór danych VggFace2. 
 
 W celach pokazania, że implementacja jest poprawna porównujemy następujące modele
 
-Porównanie:
-dwa poejścia: dwa datasety, modele niekoniecznie moje ale testowane na własnej ewaluacji
-
- triplet(google report), wytrenowanych na danych prywatnych
- triplet(own), centre(external source) wytrenowanych na VggFace2
- triplet(own), centre(external source) wytrenowanych na MS1m
--> wyjdzie, że triplet loss jest o wiele mniej skuteczna 
-
-see this:
-https://arxiv.org/pdf/1901.08616.pdf
-https://arxiv.org/pdf/1709.02940.pdf
+\subsubsection{Ewaluacja}
 
 
-
-\subsubsection{Rozporszona weryfikacja twarzy}
-porównanie:
-
-centre loss ms1m
+\subsubsection{Wyniki}
 
 
-globalny model arcface uczony na ms1m, testowany na lwf i megaface
-globalny model arcface uczony na ms1m, dotrenowany tripletem na VggFace2, testowany
-
-
-globalny model arcface dotrenowanie na lwf ale negatywne przykłady samplujemy z generatora
-globalny model arcface dotrenowanie na megaface ale negatywne przykłady samplujemy z generatora
-
+%see this:
+%https://arxiv.org/pdf/1901.08616.pdf
+%https://arxiv.org/pdf/1709.02940.pdf
 
 
