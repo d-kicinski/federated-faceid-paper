@@ -1,8 +1,7 @@
 ***
 *** Frameworks
 ***
-
-@inproceedings{paszke2017automatic,
+@inproceedings{PyTorch,
   title={Automatic Differentiation in {PyTorch}},
   author={Paszke, Adam and Gross, Sam and Chintala, Soumith and Chanan, Gregory and Yang, Edward and DeVito, Zachary and Lin, Zeming and Desmaison, Alban and Antiga, Luca and Lerer, Adam},
   booktitle={NeurIPS Autodiff Workshop},
@@ -14,7 +13,7 @@
 *** Architectures papers
 ***
 
-@InProceedings{Schroff_2015_CVPR,
+@InProceedings{Facenet,
 author = {Schroff, Florian and Kalenichenko, Dmitry and Philbin, James},
 title = {FaceNet: A Unified Embedding for Face Recognition and Clustering},
 booktitle = {The IEEE Conference on Computer Vision and Pattern Recognition (CVPR)},
@@ -45,7 +44,7 @@ year = {2015}
   pages={770-778}
 }
 
-@article{Howard2017MobileNetsEC,
+@article{MobileNet,
   title={MobileNets: Efficient Convolutional Neural Networks for Mobile Vision Applications},
   author={Andrew G. Howard and Menglong Zhu and Bo Chen and Dmitry Kalenichenko and Weijun Wang and Tobias Weyand and Marco Andreetto and Hartwig Adam},
   journal={ArXiv},
@@ -56,20 +55,22 @@ year = {2015}
 ***
 *** Datasets papers
 ***
-@TechReport{LFWTechUpdate,
+@TechReport{DatasetLFW,
   author =       {Gary B. Huang Erik Learned-Miller},
   title =        {Labeled Faces in the Wild: Updates and New Reporting 
                   Procedures},
   institution =  {University of Massachusetts, Amherst},
   year =         2014,
   number =       {UM-CS-2014-003},
-  month =        {May}}
+  month =        {May}
+  }
   
-@InProceedings{Cao18,
+@InProceedings{DatasetVGGFace2,
 author = "Cao, Q. and Shen, L. and Xie, W. and Parkhi, O. M. and Zisserman, A.",
 title  = "VGGFace2: A dataset for recognising faces across pose and age",
 booktitle = "International Conference on Automatic Face and Gesture Recognition",
-year  = "2018"}
+year  = "2018"
+}
 
 @misc{yi2014learning,
     title={Learning Face Representation from Scratch},
@@ -81,20 +82,21 @@ year  = "2018"}
 }
 
 
-@misc{glintweb,
+@misc{DatasetGlintweb,
   howpublished="\url{http://trillionpairs.deepglint.com/overview.}"
 }
 
-@InProceedings{megaface,
+@InProceedings{DatasetMegaFace,
   title="The megaface benchmark: 1 million faces for recognition at scale.",
   author="I.~Kemelmacher-Shlizerman, S.~M. Seitz, D.~Miller, and E.~Brossard.",
-  booktitle="In {\em CVPR}, 2016."}
+  booktitle="In {\em CVPR}, 2016."
+  }
 
 ***
 *** Federated learning papers ***
 ***
 
-@misc{mcmahan2016communicationefficient,
+@misc{FLBasic,
     title={Communication-Efficient Learning of Deep Networks from Decentralized Data},
     author={H. Brendan McMahan and Eider Moore and Daniel Ramage and Seth Hampson and Blaise Agüera y Arcas},
     year={2016},
@@ -103,7 +105,7 @@ year  = "2018"}
     primaryClass={cs.LG}
 }
 
-@inproceedings{47976,
+@inproceedings{FLSystemDesign,
 title	= {Towards Federated Learning at Scale: System Design},
 author	= {Keith Bonawitz and Hubert Eichner and Wolfgang Grieskamp and Dzmitry Huba and Alex Ingerman and Vladimir Ivanov and Chloé M Kiddon and Jakub Konečný and Stefano Mazzocchi and Brendan McMahan and Timon Van Overveldt and David Petrou and Daniel Ramage and Jason Roselander},
 year	= {2019},
@@ -112,7 +114,7 @@ note	= {To appear},
 booktitle	= {SysML 2019}
 }
 
-@misc{konen2016federated,
+@misc{FLOptimization,
     title={Federated Optimization: Distributed Machine Learning for On-Device Intelligence},
     author={Jakub Konečný and H. Brendan McMahan and Daniel Ramage and Peter Richtárik},
     year={2016},
@@ -121,7 +123,7 @@ booktitle	= {SysML 2019}
     primaryClass={cs.LG}
 }
 
-@inproceedings{47246,
+@inproceedings{FLSecureAggregation,
 title	= {Practical Secure Aggregation  for Privacy-Preserving Machine Learning},
 author	= {Aaron Segal and Antonio Marcedone and Benjamin Kreuter and Daniel Ramage and H. Brendan McMahan and Karn Seth and Keith Bonawitz and Sarvar Patel and Vladimir Ivanov},
 year	= {2017},
@@ -133,9 +135,8 @@ booktitle	= {CCS}
 *** Edge device machine learning ***
 ***
 
-@inproceedings{129caeecbab449ef854c1257973d9f75,
+@inproceedings{EdgeFacebook,
 title = "Machine learning at facebook: Understanding inference at the edge",
-abstract = "At Facebook, machine learning provides a wide range of capabilities that drive many aspects of user experience including ranking posts, content understanding, object detection and tracking for augmented and virtual reality, speech and text translations. While machine learning models are currently trained on customized datacenter infrastructure, Facebook is working to bring machine learning inference to the edge. By doing so, user experience is improved with reduced latency (inference time) and becomes less dependent on network connectivity. Furthermore, this also enables many more applications of deep learning with important features only made available at the edge. This paper takes a datadriven approach to present the opportunities and design challenges faced by Facebook in order to enable machine learning inference locally on smartphones and other edge platforms.",
 keywords = "Edge Inference, Machine learning",
 author = "Carole-Jean Wu and David Brooks and Kevin Chen and Douglas Chen and Sy Choudhury and Marat Dukhan and Kim Hazelwood and Eldad Isaac and Yangqing Jia and Bill Jia and Tommer Leyvand and Hao Lu and Yang Lu and Lin Qiao and Brandon Reagen and Joe Spisak and Fei Sun and Andrew Tulloch and Peter Vajda and Xiaodong Wang and Yanghan Wang and Bram Wasti and Yiming Wu and Ran Xian and Sungjoo Yoo and Peizhao Zhang",
 year = "2019",
@@ -149,13 +150,48 @@ pages = "331--344",
 booktitle = "Proceedings - 25th IEEE International Symposium on High Performance Computer Architecture, HPCA 2019",
 }
 
+
 ***
-*** Github repositories ***
+*** StyleGAN
 ***
-@misc{dcp19,
-    author       = "Brodzki, Artur M.",
-    title        = "{I}mplementation of own steganography protocol {DCP}-19, loosely based on {HICCUPS}",
-    howpublished = "Dostęp zdalny (14.03.2019): \url{https://github.com/ArturB/DCP-19}",
-    year         = "2019"
+@article{StyleGAN,
+  title   = {A style-based generator architecture for generative adversarial networks.},
+  author  = {Tero Karras, Samuli Laine, and Timo Aila.},
+  year    = {2018},
+  booktitle = {CVPR}
+}
+
+@inproceedings{StyleGAN2,
+  title   = {Analyzing and Improving the Image Quality of {StyleGAN}},
+  author  = {Tero Karras and Samuli Laine and Miika Aittala and Janne Hellsten and Jaakko Lehtinen and Timo Aila},
+  journal = {CoRR},
+  volume  = {abs/1912.04958},
+  year    = {2019},
+}
+
+
+***
+*** Misc
+***
+
+@misc{SmartphoneOwenrship,
+    title={Smartphone ownership and internet usage continues to climb in emerging economies.},
+    author={Jacob Poushter},
+    year={2016},
+    howpublished="\url{http://www.pewglobal.org/2016/02/22/smartphone-ownership-and-internet-usage-continues-to-climb-in-emerging-economies/}.}"
+}
+
+@misc{SmartphoneOwenrshipv2,
+    title={Technology device ownership.},
+    author={Monica Anderson},
+    year={2015},
+    howpublished="\url{http://www.pewinternet.org/2015/10/29/technology-device-ownership-2015/}"
+}
+
+@misc{FaceBiometic,
+    title={More than one billion smartphones to feature facial recognition in 2020.},
+    author={Pavel Naiya},
+    year={2018},
+    howpublished="\url{https://www.counterpointresearch.com/one-billion-smartphones-feature-face-recognition-2020/}"
 }
 

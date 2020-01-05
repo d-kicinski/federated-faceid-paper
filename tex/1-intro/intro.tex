@@ -1,0 +1,48 @@
+\newpage
+\section{Wstęp}
+
+Coraz częściej urządzenia internetu rzeczy stają się głównymi urządzeniami komputerowymi coraz
+większej liczby użytkowników~\cite{SmartphoneOwenrship,SmartphoneOwenrshipv2}. Często gromadzą one wrażliwe dane i dostęp do takich
+urządzeń przez niewłaściwe osoby grozi nieodwracalnymi stratami dla ich właściciela. Nowe
+przyrządy wyposażone w odpowiednie sensory pozwalają na uwierzytelnienie dostępu już nie tylko za
+pomocą hasła ale również przez weryfikacje biometryczną. Zabezpieczenia biometryczne mogą się
+opierać na rozpoznawaniu linii papilarnych, głosu, skanowaniu żył, czy też tęczówki lub siatkówki
+oka. W szczególności popularnym rozwiązaniem jest weryfikacja użytkownika przez biometrie twarzy ~\cite{FaceBiometic}.
+
+Metody weryfikacji twarzy (ją jakieś) wymagają wyspecjalizowanych i dokładnych kamer (need fact
+check). Z jednej strony montowanie drogich i nowoczesnych kamer na urządzeniach IoT do celów
+weryfikacji jest nieopłacalne finansowo, a z drugiej z perspektywy użytkownika pożądane jest
+posiadanie możliwie dokładnego systemu weryfikacji dostępu. Najnowocześniejsze i najbardziej
+dokładne metody bazują w całości lub przynajmniej części na bazie sieci neuronowych (cite,fact
+check). Metody te pewnym stopniu niwelują potrzebę posiadania wyspecjalizowanych kamer jednak
+dokładność nowoczesnych metod jest bardzo uzależniona od jakości i ilość danych, które posłużyły
+do wytrenowania sieci neuronowej.
+
+Sensory, w które wyposażone są te urządzania (aparat, mikrofon, itp), w połączeniu z
+faktem, że są używane codziennie, gromadzą niebywałą ilość, zazwyczaj prywatnych,
+danych. Modele wyuczone na takich danych dają znakomitą poprawę ich użyteczności jednak ze względu
+na ich wrażliwy charakter wiąże się to z ryzykiem i wysoką odpowiedzialnością ich
+przechowywania w scentralizowanej lokalizacji albo nawet całkowitym brakiem dostępu do tych
+danych.
+
+Federated Learning pozwala na bezpieczne dla użytkownika wykorzystanie jego prywatnych danych
+w celu dotrenowania sieci neuronowych i w tym poprawy ich jakości. W tej pracy zostanie
+zbadana metoda ta metoda uczenia sieci neuronowych w implementacji systemu rozpoznawania twarzy
+systemu na urządzania IoT.
+
+\smallbreak
+
+Praca została podzielona na rozdziały. W rozdziale~\ref{sec:general} został przedstawiony ogólny
+zarys implementowanego systemu. Opisujemy czym charakteryzują się urządzania IoT się, na czym
+polega zadanie weryfikacji użytkownika i pokazujemy, że zastosowanie podejścia Federated
+Learningu do tego zadania jest odpowiednie. Następnie w rozdziale~\ref{sec:verification} w
+szczegółach zostaje opisany problem weryfikacji użytkownika na podstawie cech biometrycznych jego
+twarzy. Omawiane zostają dwa współczesne podejścia wykorzystujące głębokie sieci neuronowe, ich
+wady i zalety względem wykorzystania w FL. Prezentujemy dokładniej wybrane przez nas podejście
+wraz z naszą implementacją i otrzymanymi wynikami. Rozdział~\ref{sec:federated} został poświęcony
+na omówienie Federated Learningu. Opisujemy cechy środowiska, w którym zastosowanie tej metody
+treningu sieci daje największy zysk, prezentujemy projekt całego systemu zaczynając od protokołu
+komunikacji, założeń co do urządzeń końcowych oraz serwera. Omawiamy algorytm Federated
+Averaging oraz jego implementacje. Ostatecznie w rozdziale~\ref{sec:fedfaceid}prezentujemy zastosowanie FL do dotrenowania
+ekstraktora cech w rozproszonym zbiorze danych. Na końcu w rozdziale~\ref{sec:summary} zostało
+zawarte podsumowanie tej pracy wraz z propozycją jej dalszego rozwoju.

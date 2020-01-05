@@ -8,7 +8,7 @@
 \ProvidesClass{eiti/eiti-thesis}
 
 \LoadClass[
-    12pt, 
+    10pt, 
     twoside
 ]{mwart}
 
