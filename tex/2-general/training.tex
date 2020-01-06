@@ -6,61 +6,67 @@ zmiennoprzecinkowymi, które na podstawie przykładów trenujących są iteracyj
 wybrany algorytm optymalizacji. Proces ten nazywany w literaturze jest treningiem. Po wytrenowaniu model trafia do środowiska produkcyjnego, w którym będzie dawał predykcje.
 
 Popularnym i prostym w implementacji środowiskiem produkcyjnym jest wdrożenie modelu w postaci
-serwisu chmurowego. Serwis postawiony na serwerze wystawia API. Na zapytanie o predykcje dla
-danych wejściowych serwer odsyła predykcje zwróconą przez model - rysunek~\ref{fig:deploy-0}.
-Rozwiązanie to oczywistą zaletę inferencja modelu wykonywana jest w chmurze przez co urządzenie
-nie zużywa swoich zosowów obliczeniowych oszczędzająć energię oraz pamięć, jednak kosztem
-wymagania stałwgo dostępu urządzenia do internetu oraz potrzebą wysłania dancyh wejściowych do
-serwera.
+serwisu chmurowego~\cite{ServerFacebook}. Serwis postawiony na serwerze wystawia API. Na
+zapytanie o predykcje dla danych wejściowych serwer odsyła predykcje zwróconą przez model -
+rysunek~\ref{fig:deploy-0}. Rozwiązanie to oczywistą zaletę inferencja modelu wykonywana jest w
+chmurze przez co urządzenie nie zużywa swoich zasobów obliczeniowych oszczędzając energię oraz
+pamięć, jednak kosztem wymagania stałego dostępu urządzenia do internetu oraz potrzebą wysłania
+danych wejściowych do serwera.
 
-\begin{figure}[h!]\label{fig:deploy-0}
+\begin{figure}[h!]
     \centering
     \includegraphics[width=0.8\linewidth]{img/ml_server_0_drawio.pdf}
     \caption{Środowisko produkcyjne z serwisem chmurowym.}
+    \label{fig:deploy-0}
     \vspace{-4mm}
 \end{figure}
 
-Innym, coraz to bardziej popularnym, podejściem jest wdrożenie modeli bezpośrenio na urządzenia
+Innym, coraz to bardziej popularnym, podejściem jest wdrożenie modeli bezpośrednio na urządzenia
 końcowe~\cite{EdgeFacebook}(rysunek~\ref{fig:deploy-1}). Jest to proces o tyle bardziej skomplikowany przez to, że aktualnie
-popularne frameworki\cite{PyTorch,Tensorflow} do budowania i trenowania sieci neuronowych nie
-wspierają większośći platform, na których budowane są urządzenia IoT. Taki sposób wdrożenia
+popularne frameworki\cite{PyTorch,Tensorflow,Mxnet} do budowania i trenowania sieci neuronowych nie
+wspierają większości platform, na których budowane są urządzenia IoT. Taki sposób wdrożenia
 modelu pozwala na korzystanie z modelu w trybie offline, zwalnia nas z obowiązku utrzymywania
 serwera produkcyjnego oraz nie zmusza użytkownika do przesyłania danych na zewnątrz urządzenia.
 Niestety narzucamy przez to duże ograniczenia na model oraz na docelowe urządzenie IoT.
 Urządzenia końcowe mają o wiele niższe możliwości obliczeniowe oraz pamięciowe dlatego wdrażany
 model powinien być dostatecznie mały tak aby zbytnio nie obciążać urządzenia. Aktualnie
 urządzenia zdolne do uruchomienia sieci wyprodukowanych przez popularniejsze frameworki to
-wszystkie platformy obsługujące system linux oraz smarfony z systeme Android oraz iOS.
+wszystkie platformy obsługujące system linux oraz smarfony z systemem Android lub iOS.
 
-\begin{figure}[h!]\label{fig:deploy-1}
+\begin{figure}[h!]
     \centering
     \includegraphics[width=0.5\linewidth]{img/ml_server_1_drawio.pdf}
     \caption{Środowisko produkcyjnego - wdrożenie modelu bezpośrednio na urządzenia końcowe.}
+    \label{fig:deploy-1}
     \vspace{-4mm}
 \end{figure}
 
-Na rysunku~\ref{fig:deploy-2} przedstawio schematyczne dotrenowywanie modeli na urządzeniach
-koncowych na danych znajdujących sie na urządzeniach. Utilizujemy w ten sposób zbierane przez urządznia dane i aktualizujemy wagi modelu wykorzystując dane pochodzące bezpośrednio od użytkownika. Urządznie zyskuje w ten sposób model
+Na rysunku~\ref{fig:deploy-2} przedstawiono schematyczne dotrenowanie modeli na urządzeniach
+końcowych na danych znajdujących sie na urządzeniach. Wykorzystujemy w ten sposób zbierane przez
+urządzenia dane i aktualizujemy wagi modelu wykorzystując dane pochodzące bezpośrednio od
+użytkownika. Urządzenie zyskuje w ten sposób model
 lepiej spersonalizowany pod swoją dystrybucje danych wejściowych. Modele nie są współdzielone,
 każdy z użytkowników ma swóją wersje modelu.
 
-\begin{figure}[h!]\label{fig:deploy-2}
+\begin{figure}[h!]
     \centering
     \includegraphics[width=0.8\linewidth]{img/ml_server_2_drawio.pdf}
     \caption{Wdrożenie na urządzenia końcowe i dotrenowanie modelu wykorzystując lokalnie zbierane dane}
+    \label{fig:deploy-2}
     \vspace{-4mm}
 \end{figure}
 
 Na rysunku~\ref{fig:deploy-3} przedstawione zostało podejście Federated Learningu. Od poprzednika
 różni go tylko element serwera FL, który pobiera dotrenowane modele od urządzeń agreguje je i
-rozsyła je spowrotem. Podejście to pozwala na lepszą generalizacje modeli i w efekcie lepszą
+rozsyła je z powrotem. Podejście to pozwala na lepszą generalizacje modeli i w efekcie lepszą
 predykcję. Niestety przez wprowadzenie serwera pośredniczącego w wymianie modeli cały system
-ulega znaczem skomplikowaniu i wymagany jest odpowiedni protokół dotrenownywania, agregacji i
+ulega znacznemu skomplikowaniu i wymagany jest odpowiedni protokół dotrenownywania, agregacji i
 wymiany modeli. W szczegółach to podejście zostanie omówione w rozdziale~\ref{sec:federated}.
 
-\begin{figure}[h!]\label{fig:deploy-3}
+\begin{figure}[h!]
     \centering
     \includegraphics[width=1\linewidth]{img/ml_server_3_drawio.pdf}
     \caption{Wdrożenie modelu i dalsze jego dotrenowywanie stosując podejście Federated Learning}
+    \label{fig:deploy-3}
     \vspace{-4mm}
 \end{figure}
