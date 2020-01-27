@@ -11,38 +11,51 @@
 
 \section[verification]{System weryfikacji użytkownika za pomocą biometrii twarzy}\label{sec:verification}
 
-System weryfikacji twarzy posiada swoją wewnętrzną bazę
-zdjęć referencyjnych.
+Kontrola dostępu, autoryzacja i identyfikacja osób jest wciąż otwartym problemem informatyki.
+Implementacja polega zazwyczaj na podaniu przez osobę uwierzytelnianą kodu alfanumerycznego lub
+zweryfikowaniu się kluczem(np. karta magnetyczna lub chipowa). Najbezpieczniejsze systemy
+zabezpieczeń bazują jednak na cechach biometrycznych takie jak odcisk palca, tęczówka lub twarz.
+Pomimo gorszej dokładności systemów bazujących na biometrii twarzy w porównaniu do innych, są one
+bardzo często stosowane dzięki nieinwazyjności, bezkontaktowego dokonania pomiaru i popularności
+w innych aplikacjach~\cite{FaceBiometric}.
 
-\subsection{Procedura weryfikacji przy wykorzystaniu sieci neuronowych} 
+\begin{figure}[h]
+    \centering
+    \includegraphics[width=1.\textwidth]{2-0_verification_general_drawio.pdf}
+    \caption{\textbf{Proces weryfikacji użytkownika.} Proces rozpoczyna się od wykonania
+    zdjęcia. Dalsze procesowanie składa się z etapu detekcji twarzy, wyznaczenia wektora cech twarzy(embeddingu) oraz porównania wektora z bazą danych.}
+    \label{fig:proces_weryfikacji}
+\end{figure}
 
-Weryfikacja twarzy jest zadaniem przyrównania twarzy kandydata 
-do innej i sprawdzenie czy nastąpiło ich dopasowanie. Jest to mapowanie
-jeden-do-jednego: należy sprawdzić czy jest to ta sama osoba.
+Proces weryfikacji biometrią twarzy został pokazany na rysunku~\ref{fig:proces_weryfikacji}. Jak
+w każdym innym tradycyjnym systemie kontroli dostępu potrzeba jest baza użytkowników. Tutaj dla
+każdej z autoryzowanych osób przechowuje się wektor z wyznaczonymi cechami jej twarzy.
+Wyznaczanie wektora zależy od zastosowanej metody i zostanie to omówione w
+sekcji~\ref{sec:ekstraktor}. System na wejściu przyjmuje zdjęcie osoby poddawanej weryfikacji.
+Technika wykonania zdjęcia zależy od realizacji systemu wizyjnego dlatego musi ono zostać
+wstępnie przetworzone - usuwane jest zbędne tło i jest ono normalizowane(sekcja~\ref{sec:ekstrakcja_twarzy}). Następnie, powstały w
+poprzednim kroku thumbnail twarzy przekształcany jest do tej samej przestrzeni wektorowej, do
+której zostały zamienione twarze w bazie referencyjnej. W ten sposób w kolejnym kroku możemy w
+prosty sposób porównać te wektory i stwierdzić czy weryfikacja jest pozytywna lub negatywna co
+zostało omówione w sekcji~\ref{sec:verify_process}.
 
-Mając na wejściu systemu dwa zdjęcia \(x_i\) oraz \(x_j\) wynik weryfikacji będzie wyznaczany następująco:
 
-\begin{align}\label{eq:ekstraktor_weryfikacja}
-\text{weryfikacja jest}\begin{cases}
-    \text{pozytywna},& \text{jeśli } d(f(x_i), f(x_j) < \alpha \\
-    \text{negatywna},              & \text{w.p.p}
-\end{cases}
-\end{align}
-
-gdzie \(f(x)\) jest wektorem cech obrazu \(x\), opisanym w sekcji
-\ref{sec:ekstraktor}, \(\alpha\) jest marginesem, \(d(f_1, f_2)\) jest pewną funkcją dystansu liczoną pomiędzy wektorami wyznaczanymi przez \(f(x)\).
-
-\subsection{Ekstrakcja twarzy i normalizacja obrazu}
-Wstępne przetwarzanie obrazu jest koniecznym krokiem w większości systemach wizyjnych. W tym
-przypadku niezbędne będzie wykorzystanie metod detekcji twarzy oraz algorytmów ciasnego
-dopasowania zdjęcia do jej konturów. Pod uwagę były brane dwie architektury - MTCNN oraz
-RetinaFace. Wybór został ograniczony do tych dwóch głównie ze względu na ich popularność, dobrą wydajność
-oraz to, że realizują to zadanie w sposób end-to-end. Obie sieci z obrazu wejściowego 
-   wyekstrahują obszary, na których znajdują się twarze i zwracają tę informację w postaci wektorów reprezentujących prostokąt na płaszczyźnie obrazu, w którym znajduje się ciasno dopasowana twarz. Ze wszystkich twarzy wybierana jest ta, której prostokąt ma największe pole - zakładamy, że użytkownik weryfikujący się znajduję się najbliżej obiektywu kamery przez co jego twarz powinna być największa.
+\subsection{Ekstrakcja twarzy i normalizacja obrazu}\label{sec:ekstrakcja_twarzy}
+Wstępne przetwarzanie obrazu jest koniecznym krokiem w większości systemach wykorzystujących
+wizje. Na zdjęciu na wejściu systemu oprócz twarzy osoby weryfikowanej mogą znajdować się 
+w tle również twarze innych osób, dlatego w tym przypadku niezbędne będzie wykorzystanie metod
+detekcji twarzy oraz algorytmów ciasnego dopasowania zdjęcia do jej konturów. Pod uwagę były
+brane dwie architektury - MTCNN oraz RetinaFace. Wybór został ograniczony do tych dwóch głównie
+ze względu na ich popularność, dobrą wydajność oraz to, że realizują to zadanie w sposób
+end-to-end. Obie sieci z obrazu wejściowego wyekstrahują obszary, na których znajdują się twarze
+i zwracają tę informację w postaci wektorów reprezentujących prostokąt na płaszczyźnie obrazu, w
+którym znajduje się ciasno dopasowana twarz. Ze wszystkich twarzy wybierana jest ta, której
+prostokąt ma największe pole - zakładamy, że użytkownik weryfikujący się znajduję się najbliżej
+obiektywu kamery przez co jego twarz powinna być największa.
 
 W tabeli~\ref{table:face_detector} pokazano porównanie dwóch detektorów twarzy. Z uwagi na to, że
 ostatecznie największe znaczenie dla użytkownika końcowego ma dokładność całego systemu
-porównujemy tutaj właśnie dokładność weryfikacji z wykorzystaniem systemu ArcFace~\cite{Arcface} na
+porównujemy tutaj właśnie dokładność weryfikacji z wykorzystaniem ArcFace~\cite{Arcface} na
 zbiorze danych LFW~\cite{DatasetLFW} w zależności od zastosowanego detektora twarzy. Wybrany
 metoda będzie pracowała na urządzeniu o IoT dlatego porównujemy również szybkość modeli i 
 rozmiar zapisanych wag na dysku. Czas inferencji jest średnim czasem jaki potrzebuje sieć na
@@ -144,4 +157,20 @@ szczegółach w sekcji \ref{sec:tripletloss}
 % \end{align}
 
 
+\subsection{Procedura weryfikacji przy wykorzystaniu sieci neuronowych}\label{sec:verify_process}
 
+Weryfikacja twarzy jest zadaniem przyrównania twarzy kandydata 
+do innej i sprawdzenie czy nastąpiło ich dopasowanie. Jest to mapowanie
+jeden-do-jednego: należy sprawdzić czy jest to ta sama osoba.
+
+Mając na wejściu systemu dwa zdjęcia \(x_i\) oraz \(x_j\) wynik weryfikacji będzie wyznaczany następująco:
+
+\begin{align}\label{eq:ekstraktor_weryfikacja}
+\text{weryfikacja jest}\begin{cases}
+    \text{pozytywna},& \text{jeśli } d(f(x_i), f(x_j) < \alpha \\
+    \text{negatywna},              & \text{w.p.p}
+\end{cases}
+\end{align}
+
+gdzie \(f(x)\) jest wektorem cech obrazu \(x\), opisanym w sekcji
+\ref{sec:ekstraktor}, \(\alpha\) jest marginesem, \(d(f_1, f_2)\) jest pewną funkcją dystansu liczoną pomiędzy wektorami wyznaczanymi przez \(f(x)\).
