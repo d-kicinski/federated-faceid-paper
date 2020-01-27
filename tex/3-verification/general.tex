@@ -33,14 +33,45 @@ gdzie \(f(x)\) jest wektorem cech obrazu \(x\), opisanym w sekcji
 \ref{sec:ekstraktor}, \(\alpha\) jest marginesem, \(d(f_1, f_2)\) jest pewną funkcją dystansu liczoną pomiędzy wektorami wyznaczanymi przez \(f(x)\).
 
 \subsection{Ekstrakcja twarzy i normalizacja obrazu}
-Wstępne przetworzenie obrazu jest koniecznym krokiem w większości systemach wizyjnych. W tym
+Wstępne przetwarzanie obrazu jest koniecznym krokiem w większości systemach wizyjnych. W tym
 przypadku niezbędne będzie wykorzystanie metod detekcji twarzy oraz algorytmów ciasnego
 dopasowania zdjęcia do jej konturów. Pod uwagę były brane dwie architektury - MTCNN oraz
-RetinaFace. Wybór został ograniczony do tych dwóch ze względu na ich popularność, dobrą wydajność
-oraz to, że realizują to zadanie w sposób end-to-end. Obie sieci z obrazu wejściowego
-wyekstrahują obszary, na których znajdują się twarze i zwraca tę informację w postaci wektorów reprezentujących prostokąt na płaszczyźnie obrazu, w którym znajduje się ciasno dopasowana twarz. Ze wszystkich twarzy wybierana jest ta, której prostokąt ma największe pole - zakładamy, że użytkownik weryfikujący się znajduję się najbliżej obiektywu kamery przez co jego twarz powinna być największa.
+RetinaFace. Wybór został ograniczony do tych dwóch głównie ze względu na ich popularność, dobrą wydajność
+oraz to, że realizują to zadanie w sposób end-to-end. Obie sieci z obrazu wejściowego 
+   wyekstrahują obszary, na których znajdują się twarze i zwracają tę informację w postaci wektorów reprezentujących prostokąt na płaszczyźnie obrazu, w którym znajduje się ciasno dopasowana twarz. Ze wszystkich twarzy wybierana jest ta, której prostokąt ma największe pole - zakładamy, że użytkownik weryfikujący się znajduję się najbliżej obiektywu kamery przez co jego twarz powinna być największa.
 
-Na rysunku \ref{fig:ekstraktor_twarzy} pokazano działanie architektury MTCNN na przykładowych zdjęciach znajdujących sie w zbiorze LFW~\cite{DatasetLFW}.
+W tabeli~\ref{table:face_detector} pokazano porównanie dwóch detektorów twarzy. Z uwagi na to, że
+ostatecznie największe znaczenie dla użytkownika końcowego ma dokładność całego systemu
+porównujemy tutaj właśnie dokładność weryfikacji z wykorzystaniem systemu ArcFace~\cite{Arcface} na
+zbiorze danych LFW~\cite{DatasetLFW} w zależności od zastosowanego detektora twarzy. Wybrany
+metoda będzie pracowała na urządzeniu o IoT dlatego porównujemy również szybkość modeli i 
+rozmiar zapisanych wag na dysku. Czas inferencji jest średnim czasem jaki potrzebuje sieć na
+przetworzenie jednego zdjęcia o rozdzielczości 320x240 pikseli. Uśredniona została detekcja na
+wszystkich zdjęciach z zbioru LWF. Pomiary były wykonywane na urządzeniu RaspberryPi 4b
+wykorzystując wszystkie dostępne rdzenie procesora.
+
+\begin{table}[h]
+\begin{center}
+\begin{tabular}{cccc}
+\hline
+model & dokładność weryfikacji (\%)  &  czas inferencji (ms)  &   rozmiar na dysku (MB)  \\
+\hline
+MTCNN \cite{MTCNN}     & \num{99.83} & \num{83} & \num{1.9} \\ 
+RetinaFace \cite{RetinaFace}   & \num{99.86}  & \num{112}& \num{1.8}  \\
+\hline
+\end{tabular}
+\end{center}
+\caption{\textbf{Porównanie detektorów twarzy}.}
+\label{table:face_detector}
+\vspace{-4mm}
+\end{table}
+
+W dalszej części pracy zostanie wykorzystany ekstraktor MTCC. Wybrano go głównie ze względu na jego
+powszechność zastosowania w neuronowych metodach weryfikacji~\cite{Cosface,Arcface,Facenet}, szybkość oraz wystarczającą dokładność i wielkość na dysku. Na rysunku \ref{fig:ekstraktor_twarzy}
+pokazano działanie wybranej architektury na przykładowych zdjęciach znajdujących sie w zbiorze
+LFW. W celu analizy błędów jakie popełnia wybrany algorytm zostały pokazane
+również przykłądy zdjęć z niewłaściwą detekcją - twarz została poprawnie wykryta ale nie jest ona
+tą konkretną twarzą otagowaną w zbiorze danych. Obrazy te pokazują, że o ile zdjęcie zostanie wykonane w sposób właściwy, to jest, twarz osoby weryfikującej się będzie zajmowała największą część zdjęcia to błędy detektora nie powinny się propagować i wpływać na ostateczną wydajność weryfikacji.
 
 \begin{figure}[H]
     \begin{center}
@@ -67,8 +98,6 @@ Na rysunku \ref{fig:ekstraktor_twarzy} pokazano działanie architektury MTCNN na
     \caption{{\bf Przykłady działania ekstraktora twarzy.} Pokazane zostały tutaj wybrane przykłady prezentujące działanie ekstraktora twarzy.}
     \label{fig:ekstraktor_twarzy}
     \end{figure}
-
-W tej pracy zostanie wykorzystany ekstraktor MTCC. Wybrano go głównie ze względu na jego powszechność, szybkość oraz wystarczającą dokładność.
 
 \subsection{Neuronowy ekstraktor cech} \label{sec:ekstraktor}
 
