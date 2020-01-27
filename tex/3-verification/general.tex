@@ -114,15 +114,14 @@ tą konkretną twarzą otagowaną w zbiorze danych. Obrazy te pokazują, że o i
 
 \subsection{Neuronowy ekstraktor cech} \label{sec:ekstraktor}
 
-We współczesnych systemach weryfikacji wykorzystuje się głębokie sieci konwolucyjne. W
-szczegółach zostaną omówione używana przez nas architektura w sekcji XXX. Pomijając szczegóły
-modelu i traktując go jako czarną skrzynkę ogólna idea ekstraktora została pokazana na Rysunku
-\ref{fig:ekstraktor_cech}. Głównym założeniem jest stworzenie systemu end-to-end, którego
-rezultatem działania będzie embedding \(f(x)\), wyznaczony z obrazu wejściowego \(x\) przez
-rzutowanie go do pewnej przestrzeni cech \(\mathbb{R}^d\), w taki sposób, że pewna funkcja
-odległości wyznaczona dla wszystkich zdjęć twarzy jest mała dla twarzy należących do tych samych
-osób i duża dla różnych twarzy. 
-
+% W szczegółach zostaną omówione używana przez nas architektura w sekcji XXX
+We współczesnych systemach weryfikacji zazwyczaj wykorzystuje się głębokie sieci konwolucyjne.
+Pomijając na chwilę szczegóły modelu i traktując go jako czarną skrzynkę pokazano ogólną ideę
+ekstraktora na rysunku~\ref{fig:ekstraktor_cech}. Głównym założeniem jest stworzenie systemu
+end-to-end, którego wynikiem działania będzie wektor cech (embedding) \(f(x)\), wyznaczony z obrazu
+wejściowego \(x\) przez rzutowanie go do pewnej przestrzeni cech \(\mathbb{R}^d\), w taki sposób,
+że pewna funkcja odległości wyznaczona dla wszystkich zdjęć twarzy jest mała dla twarzy
+należących do tych samych osób i duża dla różnych twarzy.
 \begin{figure}[h]
     \centering
     \includegraphics[width=0.75\textwidth]{2-0_verification_ekstraktor_cech_drawio.pdf}
@@ -131,27 +130,45 @@ osób i duża dla różnych twarzy.
 \end{figure}
 
 
-W literaturze można znaleźć dwie rodziny algorytmów trenujących, jedna wzorująca się na
-klasycznym podejściu stosowanym podczas treningu klasyfikatorów obrazów. Najnowsze podejścia z
-tej rodziny algorytmów prezentujemy w sekcji \ref{sec:klasyfikatory}. Drugi rodzaj algorytmów
-bazują na optymalizacji multi-class classification hinge loss (po pl?). Opisujemy je w
+W literaturze można znaleźć dwie rodziny algorytmów trenujących głębokie sieci CNN ekstrahujące
+cechy twarzy. Jedna wzorująca się na klasycznym podejściu stosowanym w treningu klasyfikatorów
+obrazów. Najnowsze podejścia z tej rodziny algorytmów prezentujemy w sekcji
+\ref{sec:klasyfikatory}. Druga gałąź algorytmów bazują treningu na optymalizacji wielu-klasowej
+marginalnej funkcji straty (ang. multi-class classification hinge loss). Opisujemy je w
 szczegółach w sekcji \ref{sec:tripletloss}
 
-\subsubsection{Klasyfikacja twarzy}\label{sec:klasyfikatory}
-\begin{figure}[h!]
-\centering
-\includegraphics[width=1\linewidth]{img/margincompare.png}
-\caption{Porównanie marginesów decyzyjnych\cite{}}
-\vspace{-4mm}
-\label{fig:binarymargin}
-\end{figure}
-\paragraph{Softmax\cite{Centreloss}}
-\paragraph{SphereFace}
-\paragraph{CosFace\cite{Cosface}}
-\paragraph{ArcFace\cite{Arcface}}
+\subsubsection{Trening metodą optymalizacji klasyfikatora}\label{sec:klasyfikatory}
 
+Wspólną cechą opisywanych tutaj metod jest trenowanie wielu-klasowego klasyfikatora, który
+potrafi odróżnić różne osoby znajdujące się w zbiorze trenującym stosując funkcje Softmax. Głęboka sieć konwolucyjna mapuje wejściowe zdjęcie do takiej przestrzeni cech, że dodatkowy klasyfikator
+trenowany na właśnie tych wektorach jest w stanie odróżnić i zidentyfikować osoby znajdujące się
+na przykłądach trenujących. Podejście to ma dwie wady:
 
-\subsubsection{FaceNet}\label{sec:tripletloss}
+\begin{itemize}
+  \item rozmiar macierzy liniowego przekształcenia klasyfikatora \(W \in \mathbb{R}^{d \times n}\) wzrasta liniowo wraz z liczbą osób \(n\). W niektórych zbiorach liczba ta sięga do nawet kilku milionów. 
+  \item nauczone cechy są separowalne dla zamkniętego zadania klasyfikacji twarzy w zbiorze ale nie wystarczająco wyróżniające do zadania rozpoznawania z otwartą i nieograniczoną liczbą twarzy.
+\end{itemize}
+
+W literaturze znajduje się wiele odmian algorytmów bazujących na tym pomyśle. W centre
+loss~\cite{Centreloss} wzbogacono funkcję straty o dwa komponenty. Pierwsza komponenta uwzględnia
+wielkość odległości euklidesowej pomiędzy liczonej pomiędzy wektorami cech różnych klas, a druga
+komponenta z kolei brała pod uwagę odległości wektorów należących do tych samych klas. Chciano w
+ten sposób zapewnić inter-klasową kompaktowość reprezentacji oraz intra-klasową
+rzadkość-reprezentacji. W CosFace~\cite{Cosface} dodano dodatkowo margines cosinusowy jako funkcje
+kary, dodawanej do wektorów wychodzących bezpośredniego z sieci konwolucyjnej. W
+ArcFace~\cite{Arcface} pomysł ten został jeszcze dalej rozwinięty jeszcze bardziej zwiększając moc
+dyskryminującą wektorów cech. 
+
+Ostanie usprawnienia, które zaszły w tej gałęzi algorytmów sprawiły, że wytrenowane w ten sposób CNN obecnie szczytują  w benchmarkach zarówno zadań weryfikacji, rozpoznawania jak i klasteryzacji osób. Niestety ze względu na to, że efektywny trening tą metodą wymaga obecności dużej liczby osób w zbiorze trenującym nie jest możliwe zastosowanie algorytmów z tej gałęzi do dotrenowywania modeli na urządzeniach użytkowników w ramach realizacji FL - nie jest możliwe, zebranie takiego zbioru na prywatnych urządzeniach nie naruszając prywatności danych.
+
+\subsubsection{FaceNet: TODO}\label{sec:tripletloss}
+Drugą gałęzią algorytmów trenujących ekstraktor cech są metody bezpośredniego uczenia embeddingu ze zdjęcia.
+Podejście to również nie jest wolne od wad:
+\begin{itemize}
+  \item przy większych zbiorach danych występuje eksplozja kombinacji liczby trójek twarzy co prowadzi do znacznego wzrostu w liczbie kroków optymalizacji 
+  \item znajdowanie semi-trudnych przykładów do trójek jest zadaniem trudnym 
+\end{itemize}
+
 % \begin{align}\label{eq:triplet_dystant}
     % \left\Vert f(x_i) - f(x_j) \right\Vert_q^p < \alpha
 % \end{align}
