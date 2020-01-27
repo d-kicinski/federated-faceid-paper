@@ -10,7 +10,9 @@
 
 
 \section[verification]{System weryfikacji użytkownika za pomocą biometrii twarzy}\label{sec:verification}
-\subsection{Komercyjne systemy weryfikacji twarzy}
+
+System weryfikacji twarzy posiada swoją wewnętrzną bazę
+zdjęć referencyjnych.
 
 \subsection{Procedura weryfikacji przy wykorzystaniu sieci neuronowych} 
 
@@ -30,10 +32,15 @@ Mając na wejściu systemu dwa zdjęcia \(x_i\) oraz \(x_j\) wynik weryfikacji b
 gdzie \(f(x)\) jest wektorem cech obrazu \(x\), opisanym w sekcji
 \ref{sec:ekstraktor}, \(\alpha\) jest marginesem, \(d(f_1, f_2)\) jest pewną funkcją dystansu liczoną pomiędzy wektorami wyznaczanymi przez \(f(x)\).
 
-\subsection{Wstępne przetwarzanie obrazu}
-\subsubsection{Normalizacja obrazu}
+\subsection{Ekstrakcja twarzy i normalizacja obrazu}
+Wstępne przetworzenie obrazu jest koniecznym krokiem w większości systemach wizyjnych. W tym
+przypadku niezbędne będzie wykorzystanie metod detekcji twarzy oraz algorytmów ciasnego
+dopasowania zdjęcia do jej konturów. Pod uwagę były brane dwie architektury - MTCNN oraz
+RetinaFace. Wybór został ograniczony do tych dwóch ze względu na ich popularność, dobrą wydajność
+oraz to, że realizują to zadanie w sposób end-to-end. Obie sieci z obrazu wejściowego
+wyekstrahują obszary, na których znajdują się twarze i zwraca tę informację w postaci wektorów reprezentujących prostokąt na płaszczyźnie obrazu, w którym znajduje się ciasno dopasowana twarz. Ze wszystkich twarzy wybierana jest ta, której prostokąt ma największe pole - zakładamy, że użytkownik weryfikujący się znajduję się najbliżej obiektywu kamery przez co jego twarz powinna być największa.
 
-\subsubsection{Normalizacja pozy}
+Na rysunku \ref{fig:ekstraktor_twarzy} pokazano działanie architektury MTCNN na przykładowych zdjęciach znajdujących sie w zbiorze LFW~\cite{DatasetLFW}.
 
 \begin{figure}[H]
     \begin{center}
@@ -61,7 +68,10 @@ gdzie \(f(x)\) jest wektorem cech obrazu \(x\), opisanym w sekcji
     \label{fig:ekstraktor_twarzy}
     \end{figure}
 
+W tej pracy zostanie wykorzystany ekstraktor MTCC. Wybrano go głównie ze względu na jego powszechność, szybkość oraz wystarczającą dokładność.
+
 \subsection{Neuronowy ekstraktor cech} \label{sec:ekstraktor}
+
 We współczesnych systemach weryfikacji wykorzystuje się głębokie sieci konwolucyjne. W
 szczegółach zostaną omówione używana przez nas architektura w sekcji XXX. Pomijając szczegóły
 modelu i traktując go jako czarną skrzynkę ogólna idea ekstraktora została pokazana na Rysunku

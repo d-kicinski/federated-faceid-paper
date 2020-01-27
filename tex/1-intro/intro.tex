@@ -5,26 +5,17 @@
 
 Ostatnio kluczowym postępem w wielu dziedzinach wykorzystujących modele predykcyjne było
 wykorzystanie metod opartych o głębokie sieci neuronowe. Skuteczność takich modeli zależy w dużej
-mierze od jakości i ilości danych wykorzystanych ich wytrenowania. Niedawnym trendem jest umieszczanie modeli bezpośrednio na urządzaniach końcowych(i w tym urządzaniach IoT) \cite{EdgeFacebook}. Coraz częściej urządzenia internetu rzeczy stają się głównymi urządzeniami komputerowymi coraz większej liczby
+mierze od jakości oraz ilości danych wykorzystanych do ich wytrenowania. Niedawnym trendem jest
+umieszczanie modeli bezpośrednio na urządzaniach końcowych. \cite{EdgeFacebook}. Coraz częściej urządzenia internetu rzeczy stają się głównymi urządzeniami komputerowymi coraz większej liczby
 użytkowników~\cite{SmartphoneOwenrship,SmartphoneOwenrshipv2} przez co gromadzą one ogromną ilość
 danych. Niestety przez ich, zazwyczaj, prywatny charakter dostęp do nich przez niewłaściwe osoby grozi nieodwracalnymi stratami dla ich właściciela przez przez co użytkownicy tych urządzeń niechętnie zgadzają się na wgląd to tych danych przez firmy trzecie.
 
 Moją motywacją do podjęcia tego tematu jest zainteresowanie tematyką Federated Learningu(FL). Ta
-prosta w założeniach idea pozwala na bezpieczny dla użytkownika trening modeli neuronowych z
-wykorzystaniem jego prywatnych danych. Dane nigdy nie wychodzą poza urządzenia użytkowników. W
+prosta w założeniach idea pozwala na bezpieczny dla użytkowników trening modeli neuronowych z
+wykorzystaniem ich prywatnych danych. Dane nigdy nie wychodzą poza urządzenia użytkowników. W
 tej pracy zostanie ona zastosowana do ostatnio popularnego rozwiązania weryfikacji użytkownika
 urządzania końcowego przez biometrie twarzy~\cite{FaceBiometic}.
 
-% Nowe przyrządy wyposażone w odpowiednie sensory pozwalają na
-% uwierzytelnienie dostępu już nie tylko za pomocą hasła ale również przez weryfikacje
-% biometryczną. Zabezpieczenia biometryczne mogą się opierać na rozpoznawaniu linii papilarnych,
-% głosu, skanowaniu żył, czy też tęczówki lub siatkówki oka. W szczególności popularnym
-% rozwiązaniem jest weryfikacja użytkownika przez biometrie twarzy
-
-% Federated Learning pozwala na bezpieczne dla użytkownika wykorzystanie jego prywatnych danych
-% w celu dotrenowania sieci neuronowych i w tym poprawy ich jakości. W tej pracy zostanie
-% zbadana metoda ta metoda uczenia sieci neuronowych w implementacji systemu rozpoznawania twarzy
-% systemu na urządzania IoT.
 
 \subsection{Cel pracy}
 Celem pracy było zaprojektowanie oraz zaimplementowanie systemu dotrenowywania neuronowych modeli ekstrakcji cech twarzy na urządzeniach IoT. Powinien on pozwalać na ulepszenie istniejących modeli wytrenowanych w tradycyjny sposób poprzez dodatkowy trening na urządzeniach końcowych użytkowników z wykorzystaniem przechowywanych na nich prywatnych danych użytkownika. Projektowany system nie powinień ujawniać danych użytkowników oraz ma być kompatybilny z istniejącymi algorytmami zabezpieczającymi~\cite{FLSecureAggregation}.

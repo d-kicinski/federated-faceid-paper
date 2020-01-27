@@ -284,14 +284,19 @@
         \hfill \break
         \hfill \break
         \hfill \break
-        \ifnum \pdf@strcmp{\ThesisType}{Engineer} = 0
-            \includegraphics[width=\textwidth]{eiti/title-inz.png} \\
-        \fi
-        \ifnum \pdf@strcmp{\ThesisType}{Master} = 0
-            \includegraphics[width=\textwidth]{eiti/title-mgr.png} \\
-        \fi
+
+        \begin{center}\Huge
+        Sprawozdanie z pracowni dyplomowej inżynierskiej (2)
+            % Since I Saw You Last,\\There's a Change Upon You
+        \end{center}
+        % \ifnum \pdf@strcmp{\ThesisType}{Engineer} = 0
+            % \includegraphics[width=\textwidth]{eiti/title-inz.png} \\
+        % \fi
+        % \ifnum \pdf@strcmp{\ThesisType}{Master} = 0
+            % \includegraphics[width=\textwidth]{eiti/title-mgr.png} \\
+        % \fi
         \hfill \break
-        na~kierunku \@kierunek \\
+        % na~kierunku \@kierunek \\
         \hfill \break
         \hfill \break
         \large

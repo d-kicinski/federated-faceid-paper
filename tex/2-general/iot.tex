@@ -12,11 +12,11 @@ przez najpopularniejsze frameworki do tworzenia modeli neuronowych oraz powinno 
 wystarczająco wydajne. Zbiór platform został więc ograniczony do tych, które są w stanie
 uruchomić system operacyjny Linux. W tabeli~\ref{table:device_comp} przedstawione zostało
 porównanie najpopularniejszych urządzeń tego typu ze względu na czas inferencji wybranej sieci
-neuronowej~\cite{BoardBenchmark} oraz ceny.
+neuronowej~\cite{BoardBenchmark} oraz ceny proponowanej przez producenta.
 
 \begin{table}[h]
     \begin{tabular}{ccc}
-   Platforma                            & Czas inferencji MobileNet~\cite{MobileNet} (ms) & Cena producenta \\[0.5ex] 
+   Platforma                            & Czas inferencji MobileNet~\cite{MobileNet} (ms) & Cena producenta (USD) \\[0.5ex] 
     \hline\hline
     Coral Dev Board                      & \num{15.7}           & \num{150}                  \\
     \hline
@@ -32,7 +32,7 @@ neuronowej~\cite{BoardBenchmark} oraz ceny.
     \label{table:device_comp}
 \end{table}
 
-W tej pracy, wszelkie porównania zostaną wykonywane z użyciem platformy Raspberry Pi 4B w wersji z 4GB pamięci RAM. Wybór tego mikrokomputera został podjęty ze względu na jego największą powszechność wśród zarówno amatorów jak i profesjonalistów systemów wbudowanych oraz bardzo atrakcyjną cenę. Dzięki szybszemu złączu USB 3 platforma ta pozwala na rozszerzenie o zewnętrzne procesory obliczeniowe stworzone z myślą o inferencji modeli neuronowych takich jak ostatnio popularny Coral USB Accelerator. Niestety  względu na niewygodne ograniczenia co do możliwych do wykorzystania architektur sieci neuronowych oraz ograniczenie to frameworku TensorFlow w tej pracy ograniczymy sie do samego urządzenia Raspberry Pi 4 (rysunek \ref{fig:raspberry}).
+W tej pracy, wszelkie porównania zostaną wykonywane z użyciem platformy Raspberry Pi 4B w wersji z 4GB pamięci RAM. Wybór tego mikrokomputera został podjęty ze względu na jego największą powszechność wśród zarówno amatorów jak i profesjonalistów systemów wbudowanych oraz bardzo atrakcyjną cenę. Dzięki szybszemu złączu USB 3 platforma ta pozwala na rozszerzenie o zewnętrzne procesory obliczeniowe stworzone z myślą o inferencji modeli neuronowych takich jak ostatnio popularny Coral USB Accelerator. Niestety  względu na niewygodne ograniczenia co do możliwych do wykorzystania architektur sieci neuronowych oraz zamkniecie platformy do frameworku TensorFlow w tej pracy ograniczymy sie do samego urządzenia Raspberry Pi 4 (rysunek \ref{fig:raspberry}).
 
 \begin{figure}[h]
     \centering

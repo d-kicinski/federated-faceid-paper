@@ -1,17 +1,10 @@
 \subsection{Wdrażanie modeli neuronowych na urządzenia końcowe}
 
-Tworzenie modeli predykcyjnych typu sieć neuronowa opiera się na odpowiednim ustaleniu wag
-wybranej architektury sieci. Taki model jest parametryzowany wagami - liczbami
-zmiennoprzecinkowymi, które na podstawie przykładów trenujących są iteracyjnie poprawione przez
-wybrany algorytm optymalizacji. Proces ten nazywany w literaturze jest treningiem. Po wytrenowaniu model trafia do środowiska produkcyjnego, w którym będzie dawał predykcje.
-
 Popularnym i prostym w implementacji środowiskiem produkcyjnym jest wdrożenie modelu w postaci
-serwisu chmurowego~\cite{ServerFacebook}. Serwis postawiony na serwerze wystawia API. Na
-zapytanie o predykcje dla danych wejściowych serwer odsyła predykcje zwróconą przez model -
-rysunek~\ref{fig:deploy-0}. Rozwiązanie to oczywistą zaletę inferencja modelu wykonywana jest w
-chmurze przez co urządzenie nie zużywa swoich zasobów obliczeniowych oszczędzając energię oraz
-pamięć, jednak kosztem wymagania stałego dostępu urządzenia do internetu oraz potrzebą wysłania
-danych wejściowych do serwera.
+serwisu chmurowego~\cite{ServerFacebook}. Serwis postawiony na serwerze wystawia dla konsumentów
+swoje sieciowe API. Na zapytanie o predykcje dla danych wejściowych serwer odsyła wyjście
+zwrócone przez model - rysunek~\ref{fig:deploy-0}. Rozwiązanie to oczywistą zaletę - inferencja
+modelu wykonywana jest w chmurze przez co urządzenie użytkownika nie zużywa swoich zasobów obliczeniowych oszczędzając energię oraz pamięć, jednak kosztem wymagania stałego dostępu urządzenia do internetu oraz potrzebą wysłania danych wejściowych do serwera.
 
 \begin{figure}[h!]
     \centering
@@ -22,16 +15,17 @@ danych wejściowych do serwera.
 \end{figure}
 
 Innym, coraz to bardziej popularnym, podejściem jest wdrożenie modeli bezpośrednio na urządzenia
-końcowe~\cite{EdgeFacebook}(rysunek~\ref{fig:deploy-1}). Jest to proces o tyle bardziej skomplikowany przez to, że aktualnie
-popularne frameworki\cite{PyTorch,Tensorflow,Mxnet} do budowania i trenowania sieci neuronowych nie
-wspierają większości platform, na których budowane są urządzenia IoT. Taki sposób wdrożenia
-modelu pozwala na korzystanie z modelu w trybie offline, zwalnia nas z obowiązku utrzymywania
-serwera produkcyjnego oraz nie zmusza użytkownika do przesyłania danych na zewnątrz urządzenia.
-Niestety narzucamy przez to duże ograniczenia na model oraz na docelowe urządzenie IoT.
-Urządzenia końcowe mają o wiele niższe możliwości obliczeniowe oraz pamięciowe dlatego wdrażany
-model powinien być dostatecznie mały tak aby zbytnio nie obciążać urządzenia. Aktualnie
-urządzenia zdolne do uruchomienia sieci wyprodukowanych przez popularniejsze frameworki to
-wszystkie platformy obsługujące system linux oraz smarfony z systemem Android lub iOS.
+końcowe~\cite{EdgeFacebook}(rysunek~\ref{fig:deploy-1}). Jest to proces o tyle bardziej
+skomplikowany przez to, że aktualnie popularne frameworki\cite{PyTorch,Tensorflow,Mxnet} do
+budowania i trenowania sieci neuronowych nie wspierają większości platform, na których budowane
+są urządzenia IoT. Taki sposób wdrożenia modelu pozwala na korzystanie z modelu w trybie offline,
+zwalnia nas z obowiązku utrzymywania serwera produkcyjnego oraz nie zmusza użytkownika do
+wysyłania danych na zewnątrz urządzenia. Niestety narzucamy przez to duże ograniczenia na model
+oraz na docelowe urządzenie IoT. Urządzenia końcowe mają o wiele niższe możliwości obliczeniowe
+oraz pamięciowe dlatego wdrażany model powinien być dostatecznie mały tak aby zbytnio nie
+obciążać urządzenia. Aktualnie urządzenia zdolne do uruchomienia sieci wyprodukowanych przez
+popularniejsze frameworki to wszystkie platformy obsługujące system linux oraz smarfony z
+systemem Android lub iOS.
 
 \begin{figure}[h!]
     \centering
