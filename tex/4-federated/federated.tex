@@ -1,22 +1,22 @@
 \newpage
 \section[federated]{Federated Learning}\label{sec:federated}
 
-W tym rozdziale przedstawiony zastany projekt systemu, który korzystając z podejścia Federated  Learning (FL) umożliwi na trening ekstraktora cech twarzy w rozproszonym środowisku urządzeń IoT.
+W tym rozdziale przedstawiony zostanie projekt systemu, który korzystając z podejścia Federated  Learning (FL) umożliwi na trening ekstraktora cech twarzy w rozproszonym środowisku urządzeń IoT.
 
 
 \paragraph{Federated Learning}
 
 Federated Learning (FL) jest podejściem zastosowania uczenia maszynowego w rozproszonym
-środowisku pozwalające na trening modeli on dużym zbiorze danym zdecentralizowanych prywatnych
+środowisku pozwalającym na trening na on dużym zbiorze zdecentralizowanych prywatnych
 danych znajdujących się na urządzeniach końcowych użytkowników, a w szczególności urządzeniach
 Internetu Rzeczy. FL realizuje ideę `przyniesienie kodu do danych, zamiast danych do kodu' i
-adresuje fundamentalne problemu prywatności, własności i lokalności danych. Federated learning
-został opisany w (cite).
-Problemy odpowiednie do zastosowania federated learningu moją następujące właściwości:
+adresuje fundamentalne problemy prywatności, własności i lokalności danych. Federated learning
+został opisany w \cite{FLBasic,FLSystemDesign,FLOptimization,FLSecureAggregation}.
+Problemy odpowiednie do zastosowania federated learningu mają następujące właściwości:
 \begin{itemize}
-  \item Trening na rzeczywistych danych gromadzonych na urządzaniach mobilnych dają znaczą przewagę
+  \item Trening na rzeczywistych danych gromadzonych na urządzaniach mobilnych daje znaczą przewagę
   nad treningiem na ogólnie dostępnych danych proxy dostępnych w centrach danych.
-  \item Te dane są prywatne albo są zbyt duże do przetrzymywania ich w centrach danych
+  \item Te dane są prywatne albo są zbyt duże do ich przechowywania.
   \item Dla zadań nadzorowanych, etykiety danych powstają samoistnie z interakcji użytkownika z urządzeniem.
 \end{itemize}
 
@@ -25,11 +25,10 @@ Problemy odpowiednie do zastosowania federated learningu moją następujące wł
 Algorytmy optymalizacji mogące być zastosowane do optymalizacji na urządzaniach IoT mają kilka cech wyróżniających je od znanych już algorytmów rozproszonej optymalizacji:
 \begin{itemize}
 
-\item \textbf{Non-IID} Dane trenujące on danym urządzaniu są zazwyczaj zależne od konkretnego użytkownika i dlatego lokalny zbiór danych zebrany na dowolnym urządzeniu nie będzie reprezentatywny w stosunku do dystrybucji całej populacji
+\item \textbf{Non-IID} Dane trenujące na danym urządzaniu są zazwyczaj zależne od konkretnego użytkownika i dlatego lokalny zbiór danych zebrany na dowolnym urządzeniu nie będzie reprezentatywny w stosunku do dystrybucji całej populacji
 \item \textbf{Niezbalansowany} Podobnie, niektórzy użytkownicy będą o wiele częściej korzystali z aplikacji aparatu niż inni, co będzie prowadziło do różnic w wielkości zebranych lokalnych zbiorów  danych trenujących.
 \item \textbf{Masywnie rozproszony} Spodziewa się, że liczba finalnych użytkowników biorąca udział w optymalizacji będzie większa niż średnia liczba przykładów trenujących przypadająca na jednego klienta.
-\item \textbf{Ograniczona komunikacja} Urządzania IoT są pomimo założenia, że mają dostęp do
-internetu mogą być ograniczone wolnym albo kosztownym łączem sieciowym.
+\item \textbf{Ograniczona komunikacja} Urządzania IoT mogą być ograniczone wolnym albo kosztownym łączem sieciowym.
 \end{itemize}
 
 W tej pracy główna uwaga zostanie poświęcona na doprowadzenie systemu do działania w patologicznym przypadku środowisku danych Non-IID oraz ograniczonej i zawodnej komunikacji.
@@ -37,15 +36,15 @@ W tej pracy główna uwaga zostanie poświęcona na doprowadzenie systemu do dzi
 
 \subsection{Projekt systemu}
 
-Implementowany system umożliwia trening głębokich sieci neuronowych on danych przetrzymywanych na
-bezpośrednio urządzaniu IoT. Dane te nigdy nie opuszczają samego urządzania. Wagi modelu są
+Implementowany system umożliwia trening głębokich sieci neuronowych on danych bezpośrednio przetrzymywanych na
+urządzaniu IoT. Dane te nigdy nie opuszczają samego urządzania. Wagi modeli użytkowników są
 agregowane i łączone na serwerze znajdującym się w chmurze za pomocą algorytmu Federated
 Averaging konstruując nowy model globalny, który zostaje przesłany z powrotem do urządzeń końcowych
-do inferencji. System ten został opisany pierwotnie w (cytat) i z sukcesem zaaplikowany w
-implementacji inteligentnej klawiatury smartphone. (cite blogaska googla).
+do inferencji. System ten został opisany pierwotnie w \cite{FLBasic} i z sukcesem zaaplikowany w
+implementacji inteligentnej klawiatury smartphone~\cite{FLBlog}.
 
 
-Przedstawienie architektury systemu zaczynamy od przedstawienia protokołu według, którego przebiega cały przepływ danych. Opisujemy to w następnej sekcji.
+Przedstawienie architektury systemu zaczynamy od przedstawienia protokołu według, którego przebiega cały przepływ danych.
 
 \subsubsection{Protokół}
 
@@ -55,13 +54,13 @@ Urządzania anonsują serwerowi swoją gotowość do uruchomienia zadania. Zadan
 Protokół dzieli komunikacje na rundy, z której każda zaczyna się od selekcji. Z potencjalnie tysięcy gotowych urządzeń w danym oknie czasowym, serwer wybiera ich podzbiór, który dostanie zaproszenia do wzięcia udziału obliczeniach. Liczebność tego podzbioru jest parametrem algorytmu opisywanego w kolejnym rozdziale
 
 Serwer mówi wybranym urządzeniom jakiego typu obliczenia będą wykonywane. Wraz z tą informacją
-przesłany graf obliczeniowy modelu, zserializowane parametry globalnego modelu oraz pozostałe
+przesyłany jest graf obliczeniowy modelu, zserializowane parametry globalnego modelu oraz pozostałe
 informacje niezbędne do uruchomienia obliczeń w danej rundzie. Następnie każdy z uczestników  wykonuje lokalnie obliczenia bazując na globalnym stanie oraz swoim lokalnym zbiorze danych i przesyła wynik obliczeń z powrotem na serwer. W szczególności wynikiem, w przypadku rundy treningowej, będą wytrenowane parametry modelu lokalnego. Serwer wciela zebrane aktualizacje w swój stan globalny co kończy pojedyńczą rundę i proces ten się powtarza.
 
-Opisywany protokół pozwala urządzeniom końcowym na poprawianie globalnego, pojedyńczego modelu pomiędzy rundami, z których każda składa się z trzech faz co zostało pokazane na rysunku (rysunek?).
+Opisywany protokół pozwala urządzeniom końcowym na poprawianie globalnego, pojedyńczego modelu pomiędzy rundami, z których każda składa się z trzech faz: selekcji, konfiguracji oraz raportowania.
 
 \paragraph{Selekcja}
-Cyklicznie, urządzenia, które spełniają wymagane kryteria (Patrz sekcja XXX) meldują serwerowi swoją gotowość. Serwer wybiera podzbiór z dostępnych mu urządzeń. W naszej implementacji wybrano prostą, losową selekcje  z rozkładem jednostajnym \(N\) urządzeń z tych, które
+Cyklicznie, urządzenia, które spełniają wymagane kryteria meldują serwerowi swoją gotowość. Serwer wybiera podzbiór z dostępnych mu urządzeń. W naszej implementacji wybrano prostą, losową selekcje  z rozkładem jednostajnym \(N\) urządzeń z tych, które
 ogłosiły swoją gotowość. 
 
 
@@ -72,19 +71,19 @@ modeli. Urządzenia końcowe są samo-konfigurowane według przesłanej przez se
 \paragraph{Raportowanie}
 Serwer czeka, aż partycypujące urządzenia zdadzą raport z wynikiem przeprowadzonych obliczeń. Jeśli runda była rundą treningową to wraz z otrzymaniem wszystkich zaktualizowanych modeli, serwer agreguje je z użyciem algorytmu Federated Averaging i informuje raportujące urządzenia kiedy mogą ponownie zgłosić swoją gotowość. Jeśli wystarczająca liczba urządzeń zaraportuje wyniki serwerowi w pewnym oknie czasowym, runda zostanie uznana za zakończoną z powodzeniem i zagregowany model zastąpi aktualny model globalny. W przeciwnym przypadku zebrane wyniki z tej rundy zostają porzucone. Protokół jest w pewnym stopniu odporny na to, że partycypujące urządzenia z pewnych powodów nie odpowiedzą na przesłaną konfiguracje albo nie zaraportują wyników.
 
+\vspace{5mm}
+
 Fazy selekcji i raportowania są dospecyfikowane przez zestaw parametrów. Podczas fazy selekcji  serwer bierze pod uwagę pożądaną liczbę uczestników rundy, czasy time-outów oraz minimalną liczbę potrzebnych uczestników do rozpoczęcia rundy. Faza selekcji trwa dopóty dopóki nie zostanie wybrana docelowa liczba urządzeń albo nie skończy się czas przeznaczony na faze selekcji. W drugim przypadku runda zostanie rozpoczęta jeśli została zebrana minimalna liczba urządzeń, w przeciwnym przypadku runda zostaje porzucona. Faza raportowania parametryzowana jest przez minimalną liczbę urządzeń, które muszą zaraportować wynik.
-
-\subsubsection{Urządzenie IoT}
-
-
-\subsubsection{Serwer}
 
 
 \subsection{Algorytm optymalizacji}
-
+  Algorytm \fedavglong~\cite{FLBasic}~\ref{alg:fedavg} opisany został zaimplementowany w języku Python. Do implementacji modeli
+  neuronowych i algorytmów uczących został wykorzystany framework
+  PyTorch~\cite{PyTorch}. Poprawność implementacji została sprawdzona w sekcji \ref{implementacja_fl} na zadaniu klasyfikacji obrazów wykorzystując prostą sieć konwolucyjną oraz popularny zbiór danych CIFAR10. 
   \begin{polishalgorithm}[t]
+
     \begin{algorithmic}
-    \SUB{Server executes:}
+    \SUB{Serwer wykonuje:}
       \STATE{} initialize $w_0$
       \FOR{each round $t = 1, 2, \dots$}
         \STATE{} $m \leftarrow \max(\clientfrac\cdot K, 1)$
@@ -112,17 +111,14 @@ Fazy selekcji i raportowania są dospecyfikowane przez zestaw parametrów. Podcz
     \end{polishalgorithm}
 
 
-  Algorytm~\ref{alg:fedavg} opisany został zaimplementowany w języku Python. Do implementacji modeli
-  neuronowych i algorytmów uczących został wykorzystany framework
-  PyTorch~\cite{paszke2017automatic}. Poprawność implementacji została sprawdzona na zadaniu klasyfikacji obrazów wykorzystując prostą sieć konwolucyjną oraz popularny zbiór danych CIFAR10. 
 
-  \subsection{Implementacja optymalizacji FL}
+  \subsection{Implementacja optymalizacji FL}\label{implementacja_fl}
   \subsubsection{Sieć konwolucyjna}
 
   Jako obiekt treningu omawianego algorytmu zastała użyta niewielka sieć neuronowa zawierająca
-  dwie warstwy konwolucyjną z filtrami o szerokości 5x5 (pierwsza z 32 kanałami, druga z 64, po
+  dwie warstwy konwolucyjne z filtrami o szerokości 5x5 (pierwsza z 32 kanałami, druga z 64, po
   każdej dodatkowa warstwa 2x2 max pooling), po których następuje dwu-warstwowy perceptron i na
-  końcu warstwa przekształcenia liniowego, co daje w sumie \(10^6\) miliona parametrów. Model został podsumowany w tabeli 
+  końcu warstwa przekształcenia liniowego, co daje w sumie \(10^6\) milionów parametrów. Model został podsumowany w tabeli 
 
 
   \subsubsection{Zbiory danych}
@@ -143,15 +139,15 @@ Fazy selekcji i raportowania są dospecyfikowane przez zestaw parametrów. Podcz
   \subsubsection{Protokół treningowy}
 
   Do sprawdzenia poprawności implementacji została zaimplementowana procedura treningowa wzorowana
-  na~\cite{mcmahan2016communicationefficient}. Zbiór treningowy został podzielony pomiędzy 100 użytkowników tak żeby każdy zawierał po 500 przykładów trenujących. Z powodu braku naturalnego podziału danych na tak dużą liczbę klientów rozważany jest tutaj nieco mniej wymagający przypadek, w którym dane każdego użytkowania są zbalansowane oraz równomiernie rozdystrybuowane.
+  na~\cite{FLBasic}. Zbiór treningowy został podzielony pomiędzy 100 użytkowników tak żeby każdy zawierał po 500 przykładów trenujących. Z powodu braku naturalnego podziału danych na tak dużą liczbę klientów rozważany jest tutaj nieco mniej wymagający przypadek, w którym dane każdego użytkowania są zbalansowane oraz równomiernie rozdystrybuowane.
 
   Naszym celem była maksymalizacja dokładności z jaką model klasyfikował obrazy pochodzące ze
-  zbioru testowego.Badanie jakości końcowego modelu globalnego odbywało się już nie w sposób
+  zbioru testowego. Badanie jakości końcowego modelu globalnego odbywało się już nie w sposób
   rozproszony, a na serwerze stosując cały dostępny zbiór testowy, co zostało umożliwione dzięki wprowadzonym uproszczeniom co do rozkładu danych.
 
   Obrazy uległy standardowemu przetworzeniu wstępnemu i augmentacji. Przykłady trenujące zredukowano do wielkości 24x24 pikseli przez losowe obcięcie krawędzi, obrazy uległy losowemu horyzontalnemu odbiciu lustrzanemu  oraz standardowej normalizacji.
 
-  Zaimplementowany algorytm został porównany do standardowego algorytmu SGD (cytat).
+  Zaimplementowany algorytm został porównany do standardowego algorytmu SGD~\cite{SGD}.
 
 
   \subsubsection{Ewaluacja}
@@ -165,11 +161,24 @@ Fazy selekcji i raportowania są dospecyfikowane przez zestaw parametrów. Podcz
     \algfont{SGD}  & 18000  & 31000 \\
     \fedavg     &   280~(64.3\xx) & 630~(49.2\xx) \\
     \hline
-    \algfont{SGD}-nasz  & 20500 & 45000 \\
-    \fedavg-nasz    &   510~(40.2\xx) & 1200~(37.5\xx) \\
+    \algfont{SGD}~re-implementacja  & 20500 & 45000 \\
+    \fedavg~re-implementacja    &   510~(40.2\xx) & 1200~(37.5\xx) \\
     \hline
   \end{tabular}
 \end{center}
   \mycaptionof{table}{Liczba aktualizacji modelu globalnego i przyspieszenie względem podstawowego SGD potrzebna do otrzymania zadanej dokładności (Acc) na testowym zbiorze CIFAR10.}
 \end{table}
 
+\begin{figure}[h]
+  \centering
+  \includegraphics[width=0.60\textwidth]{img/baseline.pdf}
+  \caption{\algfont{SGD}}%
+  \label{fig:baseline}%
+\end{figure}
+
+\begin{figure}[h]
+  \centering
+  \includegraphics[width=0.60\textwidth]{img/fed_avg.pdf}
+  \caption{\fedavglong}%
+  \label{fig:fedavg}%
+\end{figure}

@@ -159,25 +159,114 @@ kary, dodawanej do wektorów wychodzących bezpośredniego z sieci konwolucyjnej
 ArcFace~\cite{Arcface} pomysł ten został jeszcze dalej rozwinięty jeszcze bardziej zwiększając moc
 dyskryminującą wektorów cech. 
 
-Ostanie usprawnienia, które zaszły w tej gałęzi algorytmów sprawiły, że wytrenowane w ten sposób CNN obecnie szczytują  w benchmarkach zarówno zadań weryfikacji, rozpoznawania jak i klasteryzacji osób. Niestety ze względu na to, że efektywny trening tą metodą wymaga obecności dużej liczby osób w zbiorze trenującym nie jest możliwe zastosowanie algorytmów z tej gałęzi do dotrenowywania modeli na urządzeniach użytkowników w ramach realizacji FL - nie jest możliwe, zebranie takiego zbioru na prywatnych urządzeniach nie naruszając prywatności danych.
+Ostanie usprawnienia, które zaszły w tej gałęzi algorytmów sprawiły, że wytrenowane w ten sposób CNN obecnie szczytują  w benchmarkach zarówno zadań weryfikacji, rozpoznawania jak i klasteryzacji osób. Bardzo dużą zaletą z perspektywy tej pracy jest duża popularność tych modeli - w sieci można znaleźć mnóstwo wysokiej implementacji oraz wysokiej jakości wytrenowanych modeli.  Niestety ze względu na to, że efektywny trening tą metodą wymaga obecności dużej liczby osób w zbiorze trenującym nie jest możliwe zastosowanie algorytmów z tej gałęzi do dotrenowywania modeli na urządzeniach użytkowników w ramach realizacji FL - nie jest możliwe, zebranie takiego zbioru na prywatnych urządzeniach nie naruszając prywatności danych.
 
-\subsubsection{FaceNet: TODO}\label{sec:tripletloss}
-Drugą gałęzią algorytmów trenujących ekstraktor cech są metody bezpośredniego uczenia embeddingu ze zdjęcia.
-Podejście to również nie jest wolne od wad:
+\subsubsection{FaceNet}\label{sec:tripletloss}
+Drugą gałęzią algorytmów trenujących ekstraktor cech są metody bezpośredniego uczenia się
+embeddingu ze zdjęcia. W szczególności interesującą architekturą jest FaceNet~\cite{Facenet}.
+Metoda ta bazuje na nauczeniu sieci generowania z obrazu embeddingu od razu znajdującego się w przestrzeni Euklidesowej. Traktując model jako czarną skrzynkę (rysunek~\ref{fig:facenet_idea}), sieć jest trenowana tak, żeby kwadrat odległości \(L_2\) między dwoma embeddingami
+odpowiadał bezpośrednio podobieństwu twarzy: twarze tej samej osoby mają małe wzajemne
+odległości, a twarze różnych osób duże. Kiedy embedding został wyznaczony, realizacja
+zadania weryfikacji jest prosta - wystarczy zastosować progowanie na dystansie pomiędzy dwoma
+wektorami cech. Generowane embeddingi w szczególności powinny być skuteczne w zadaniu weryfikacji, wykorzystywana funkcja straty zaczęca aby wszystkie twarze jednej osoby zostały projektowane do wspólnego punktu w przestrzeni embeddingów jednocześnie wymuszając  margines pomiędzy jedną, a pozostałymi osobami.
+
+\begin{figure}[h]
+    \centering
+    \includegraphics[width=0.75\textwidth]{facenet_idea_drawio.pdf}
+    \caption{\textbf{Struktura modelu.} Model Facenet składa się z warstwy wejściowej, głębokiej sieci konwolucyjnej (DCNN) oraz następującej po niej normalizacji \(L_2\), która w rezultacie zwraca embedding. Na końcu podczas trenowania dołączana jest warstwa z funkcją straty - triplet loss.}
+    \label{fig:facenet_idea}
+\end{figure}
+
+\paragraph{Triplet loss}
+Embedding jest reprezentowany przez \(f(x)\in\mathbb{R}^d\). Enkoduje on zdjęcie \(x\) w
+\(d\)-wymiarową przestrzeń Euklidesową. Dodatkowo, zostaje wprowadzone ograniczenie aby embedding
+znajdował się w \(d\)-wymiarowej hipersferze, tj. \(\|f(x)\|_2=1\). Funkcja straty ma zmusić aby
+obraz \emph{anchor}) $x_i^a$ będącym zdjęciem pewnej osoby znajduje się bliżej do wszystkich
+innych zdjęć \(x_i^p\) (\emph{pozytywne}) tej samej osoby niż wszystkich inny zdjęć \(x_i^n\) (\emph{negatywne}) innych osób. Zostało to zwizualizowane na rysunku~\ref{fig:triplet_loss}. Musi więc zachodzić następujący warunek:
+
+\begin{align}\label{eq:triplet_constraint}
+  \|f(x_i^a) - f(x_i^p)\|_2^2 + \alpha &< \|f(x_i^a) - f(x_i^n)\|_2^2\;
+\end{align}
+gdzie $\alpha$ jest wymuszonym marginesem odległości pomiędzy przykładami pozytywnymi i negatywnymi.
+
+Funkcja straty, która wymusza spełnienie tego warunku jest definiowana jest przez $L=$
+\begin{equation}\label{eq:triplet_loss}
+  \sum_i^N\left[\left\|f(x_i^a)-f(x_i^p)\right\|_2^2 -
+                  \left\|f(x_i^a)-f(x_i^n)\right\|_2^2+\alpha\right]_+\;.
+\end{equation}
+
+
+\begin{figure}[h]
+    \centering
+    \includegraphics[width=0.75\textwidth]{triplet_loss_drawio.pdf}
+    \caption{Funkcja straty \textbf{triplet loss.} minimalizuje odległości pomiędzy przykładem \emph{anchor}, a przykładem \emph{pozytywnym}, z których oba są tą samą osobą i maksymalizuje odległość pomiedzy przykładami o różnych personaliów - \emph{anchor} i \emph{negatywny}}
+    \label{fig:triplet_loss}
+\end{figure}
+
+
+\paragraph{Selekcja trójek}
+ Krytycznie ważny jest sposób przykładów wchodzących do trójek. Przede wszystkim przykłady
+ powinny być trudne dla sieci tak aby warunek~\ref{eq:triplet_constraint} był naruszany i sieć
+ mogła otrzymać sygnał trenujący. Z drugiej strony selekcja najtrudniejszych przykładów będzie
+ prowadziła do wchodzenia w lokalne minima na początku treningu i w konsekwencji wolną zbieżność.
+ Autorzy proponują żeby dla każdej pary \(x_i^a\),\(x_i^p\) wybrać takie \(n_i^n\) aby
+ \begin{equation}\label{eq:semi_hard}
+  \left\|f(x_i^a)-f(x_i^p)\right\|_2^2<\left\|f(x_i^a)-f(x_i^n)\right\|_2^2\;.
+ \end{equation}
+ Takie przykłady negatywne są \emph{pół-trudne}, znajdują się dalej od przykładu anchor niż przykład pozytywny ale wciąż są w pewny sposób wymagające ponieważ wciąż znajdują się blisko pary \(x_i^a\),\(x_i^p\) - wciąż znajdują się w marginesie \(alpha\).
+
+Podejście to jest wielce obiecujące jednak nie jest wolne od wad:
 \begin{itemize}
-  \item przy większych zbiorach danych występuje eksplozja kombinacji liczby trójek twarzy co prowadzi do znacznego wzrostu w liczbie kroków optymalizacji 
-  \item znajdowanie semi-trudnych przykładów do trójek jest zadaniem trudnym 
+  \item przy większych zbiorach danych występuje eksplozja kombinacji liczby trójek twarzy co prowadzi do znacznego wzrostu w liczbie kroków optymalizacji,
+  \item znajdowanie \emph{pół-trudnych} przykładów do trójek jest zadaniem conajmniej kłopotliwym,
+  \item w mini-batchu powinna być odpowiednio duża ilość par anchor-pozytywny co narzuca dodatkowe wymagania co do użytego zbioru trenującego,
+  \item metada w praktyce wymaga ekstremalnie długich czasów treningu,
+  \item z punktu tej pracy istotną wadą jest brak dobrych implementacji i dostępnych wytrenowanych modeli. 
 \end{itemize}
+
+FaceNet jest bardzo obiecującym podejściem do trenowania ekstraktora cech twarzy. Z punku widzenia tej pracy ogromną zaletą jest brak potrzeby treningu klasyfikatora. Model do wykonania kroków optymalizacji nie potrzebuje znać wszystkich  osób znajdujących się w zbiorze trenującym co daję nadzieje na możliwe zastosowanie tej metody w późniejszym douczaniu modelu na urządzeniach użytkownika. Użytkownik przez interakcje z urządzeniem tworzy przykłady pozytywne oraz anchor - jedynym problemem wydaje się być tworzenie przykładów negatywnych jednak problem ten zostanie poruszany w dalszych rozdziałach.
+
+
+\subsubsection{Podsumowanie ekstraktorów cech twarzy}\label{sec:extraktor-podsumowanie}
+ Wybór odpowiedniego modelu ekstrakcji cech jest kluczowe w implementacji systemu systemu. Z jednej strony bardzo ważne jest aby wybrać możliwie jak najskuteczniejszą metodę, z drugiej trzeba wziąć pod uwagę ograniczenia jakie narzuca na nas Federated Learning. W tabeli~\ref{table:losscompare} znajduje się porównanie metod ze względu na ich wydajność w zadaniach weryfikacji.
+
+ \begin{table}[ht!]
+  \begin{center}
+  \begin{tabular}{cccc}
+  \hline
+  Loss Functions   & LFW & CFP-FP & AgeDB-30 \\
+  \hline
+  Softmax              & 99.08 & 94.39 & 92.33 \\
+  CosFace & 99.33 & - & - \\
+  SphereFace  & 99.42 & - & - \\
+  ArcFace      & {\bf 99.53} & {\bf 95.56} & {\bf 95.15}\\
+  \hline
+  Triplet (FaceNet)       & 98.98 & 91.90 & 89.98 \\
+  ArcFace+Triplet (FaceNet)      & 99.50 & 95.51 & 94.40  \\
+  \hline
+  \end{tabular}
+  \end{center}
+  \vspace{-2mm}
+  \caption{\textbf{Wyniki weryfikacji} ($\%$) w zależności od użytej funkcji straty na trzech benchmarkach LFW, CFP-FP oraz AgeDB-30. Jako DCNN był wykorzystany ResNet50. Umieszczone wyniki są wynikami raportowanymi przez autorów poszczególnych metod.}
+  \label{table:losscompare}
+  \vspace{-3mm}
+  \end{table}
+
+  Najlepsze metody zdają się bazować na treningu klasyfikatora. Jednak ze względu specyficzności
+  FL nie mogą być one stosowane w dotrenowywaniu modeli na urządzaniach IoT. Z drugiej strony wynik otrzymany przez FaceNet jest wciąż bardzo dobry. Pod względem szybkości wszystkie brane pod uwagę metody są sobie równe - finałowa szybkość zależy od użytej pod spodem architektury DCNN, której wybór może być niezależny od wyboru funkcji straty. 
+
+  Ostatecznie FaceNet jest jedyną metodą nadająca się do zastosowania w naszym specyficznym środowisku produkcyjnym dlatego zostanie ona wykorzystana w dalszych etapach tej pracy.
+  
 
 % \begin{align}\label{eq:triplet_dystant}
     % \left\Vert f(x_i) - f(x_j) \right\Vert_q^p < \alpha
 % \end{align}
 
-
 \subsection{Procedura weryfikacji przy wykorzystaniu sieci neuronowych}\label{sec:verify_process}
 
-Weryfikacja twarzy jest zadaniem przyrównania twarzy kandydata 
-do innej i sprawdzenie czy nastąpiło ich dopasowanie. Jest to mapowanie
+Mając model obliczający wektory cech z obrazów można przejść do kolejnego i ostatniego kroku
+procesu weryfikacji - decyzji co do wyniku. Weryfikacja twarzy jest zadaniem przyrównania twarzy
+kandydata do innej i sprawdzenie czy nastąpiło ich dopasowanie. Jest to mapowanie
 jeden-do-jednego: należy sprawdzić czy jest to ta sama osoba.
 
 Mając na wejściu systemu dwa zdjęcia \(x_i\) oraz \(x_j\) wynik weryfikacji będzie wyznaczany następująco:
@@ -190,4 +279,6 @@ Mając na wejściu systemu dwa zdjęcia \(x_i\) oraz \(x_j\) wynik weryfikacji b
 \end{align}
 
 gdzie \(f(x)\) jest wektorem cech obrazu \(x\), opisanym w sekcji
-\ref{sec:ekstraktor}, \(\alpha\) jest marginesem, \(d(f_1, f_2)\) jest pewną funkcją dystansu liczoną pomiędzy wektorami wyznaczanymi przez \(f(x)\).
+\ref{sec:ekstraktor}, \(\alpha\) jest marginesem, \(d(f_1, f_2)\) jest pewną funkcją dystansu liczoną pomiędzy wektorami wyznaczanymi przez \(f(x)\). W przypadku FaceNet funkcja \(d\) jest po prostu odległością \(L_2\).
+
+Parametr \(\alpha\) jest wybierany na podstawie cross-walidacji modelu na zbiorze walidacyjnym. 
