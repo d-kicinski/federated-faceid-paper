@@ -2,31 +2,41 @@
 % - datasets
 
 
-\subsection{Implementacja systemu weryfikacji twarzy TODO}
+\subsection{Trening ekstraktora cech FaceNet}
+Niestety dużą wadą wybranego ekstraktora cech jest brak dobrej jakości implementacji oraz co gorsza  brak raportów skutecznego odtworzenia wyników prezentowanych przez autorów. Z tego względu w tej sekcji pracy zaprezentowana zostanie własna próba re-implementacji.
 
-\subsubsection{Zbiory danych}
+\paragraph{Szczegóły implementacji}
+Wszystkie elementy procesu weryfikacji zostały zaimplementowane w języku Python z wykorzystaniem
+frameworku PyTorch. Jako architekturę CNN wybrano popularny model ResNet-50. Głównie ze względu
+na dużą moc reprezentacji oraz stabilny trening (Na tym etapie szybkość i wielkość modelu nie
+była brana pod uwagę). Poza tym implementacja była jak najdokładniej odwzorowywana według 
+zaleceń autorów zawartych w publikacji~\cite{Facenet}.
+Niestety autorzy trenowali model na swoim prywatnym zbiorze danych o wielkości do 200 milionów
+zdjęć pochodzących od 8 milionów osób. Niestety nie istnieją otwarte zbiory o podobnych
+wielkościach.
 
-W literaturze znajduje się duża liczba zbiorów do treningu ekstraktorów cech twarzy(cytaty).
+\paragraph{Zbiory danych}
+W literaturze znajduje się duża liczba zbiorów do treningu ekstraktorów cech twarzy.
 Popularnym wyborem jest zbiór MS1M, posiada on duża różnorodność twarzy oraz duża liczbę
 przykładów trenujących. VggFace2 jest relatywnie nowym zbiorem i nie tak popularnym jak poprzedni
 ale cechuje się nie tylko dużym rozmiarem ale i dużą różnorodnością wewnątrz-klasową.
 
 LFW jest jest niejako standardem w testowaniu systemów do weryfikacji, jednak ze względu na jego niewielkie rozmiary i niską różnorodność wewnątrz-klasową nie będzie odpowiedni do testowania systemu opartego o FL dlatego jego zastosowanie ograniczymy do walidacji pre-trenowanych  modeli trenowanych w tradycyjnym sposobem na serwerze.
 
-
+W tabeli~\ref{table:dataset} znajduje sie podsumowanie wspomnianych wcześniej zbiorów danych .
 
 \begin{table}[h]
 \begin{center}
 \begin{tabular}{c|c|c|c|c}
 \hline
-Zbiór danych  & \# osób   &   \# zdjęć  &   \# zdjęć na osobę   &   aligned \\
+Zbiór danych  & \# osób   &   \# zdjęć  &   \# zdjęć na osobę (średnia)   &  wyrównane \\
 \hline
-VGGFace2-train \cite{DatasetVGGFace2}     & 9.1K & 3.3M & 80/362.6/843 & Nie  \\ 
-MS1M-DeepGlint \cite{DatasetGlintweb}   & 87K  & 3.9M & ?/44.8/? & Tak \\
+VGGFace2-train \cite{DatasetVGGFace2}     & 9.1K & 3.3M & 362.6 & Nie  \\ 
+MS1M-DeepGlint \cite{DatasetGlintweb}   & 87K  & 3.9M & 44.8 & Tak \\
 \hline
 %  Walidacja  & \# osób   &   \# zdjęć  &   \# zdjęć na osobę   &   aligned \\
 \hline
-LFW \cite{DatasetLFW}   & 5,749  & 13,233 & 1/2.3/530 & Nie \\
+LFW \cite{DatasetLFW}   & 5,749  & 13,233 & 2.3& Nie \\
 \hline
 \end{tabular}
 \end{center}
@@ -35,22 +45,36 @@ LFW \cite{DatasetLFW}   & 5,749  & 13,233 & 1/2.3/530 & Nie \\
 \vspace{-4mm}
 \end{table}
 
+Ze względu na bardzo dobrą jakość i zróżnicowanie wewnątrz-klasowe do treningu sieci zostanie wykorzystany zbiór VggFace2. Przed prezentacją wyników  zostanie najpierw omówiona metodyka ewaluacyjna.
 
-Papier googla twierdzi ze udało im sie uzyskać dobry score jednak zadne inne prace nie
-raportują skutecznego otrzymania podobnych rezultatów. Może to wynikać
-\begin{itemize}
-    \item braku zbliżonego wielkością zbioru danych użytych do uzyskania raportowanych wyników
-    \item brakiem podobnych zasobów obliczeniowych
-\end{itemize}
+\paragraph{Ewaluacja}
+Do ewaluacji będzie wykorzystany LFW. Ma on zdefiniowany zbiór
+par zdjęć twarzy, które należy określić czy należą do jednej czy dwóch różnych osób.
+Wszystkie pary \(i,j\) twarzy należących do jednej osoby niech będą oznaczone przez
+\(\mathcal{P_\text{same}}\), z kolei wszystkie pary twarzy różnych osób będą oznaczone przez
+\(\mathcal{P_\text{diff}}\).
+Definiujemy zbiór wszystkich poprawie zaakceptowanych (\emph{true accept}) par jako 
+\begin{equation}
+    \ta(\alpha)=\{(i,j)\in\mathcal{P_\text{same}}, \quad \text{dla} \quad \,d(x_i,x_j)\leq \alpha\}\;.
+\end{equation}
+Zbiór ten zawiera wszystkie pary twarzy, które zostały poprawie zaklasyfikowane jako te same przy zastosowanym progu. Podobnie 
+\begin{equation}
+  \fa(\alpha)=\{(i,j)\in\mathcal{P_\text{diff}}, \quad \text{dla} \quad \,d(x_i,x_j)\leq \alpha\}
+\end{equation}
+jest zbiorem wszystkich par, które został nie poprawnie zaklasyfikowane jako te same (\emph{false accept}).
+Definiujemy dwie metryki, \emph{true accept rate} \(\tar(\alpha)\) oraz \emph{falce accept rate} \(\far(\alpha)\), które dla danego progu \(\alpha\) wyznacza się jako
+\begin{equation}
+    \tar(\alpha)=\frac{\left|\ta(\alpha)\right|}{\left|\mathcal{P_\text{same}}\right|}\;,\quad
+    \far(\alpha)=\frac{\left|\fa(\alpha)\right|}{\left|\mathcal{P_\text{diff}}\right|}\;.
+\end{equation}
+ Metryka, która będzie wykorzystywana do oceny jakości weryfikacji to stosowana we wzorcowym
+ artykule \(\tar@\far=\num{0.001}\). Wyznacza się ją następująca: 1) stosując zbiór walidacyjny
+ należy znaleźć taki próg \(\alpha\), dla którego \(\far(\alpha)\) wyniesie \(\num{0.001}\). 2)
+ policzyć metrykę \(\tar(\alpha)\) dla wyznaczonego progu \(\alpha\).
+  
+\paragraph{Wyniki eksperymentów}
 
-Została podjęta próba implementacji wytrenowania modelu stosując w.w.y metodę wykorzystując zbiór danych VggFace2. 
-
-W celach pokazania, że implementacja jest poprawna porównujemy następujące modele
-
-\subsubsection{Ewaluacja}
-
-
-\subsubsection{Wyniki}
+Ze względu na bardzo długi czas treningu i ograniczone zasoby sprzętowe udało się znaleźć tylko jeden zestaw paramtetrów, który pozwolił na względnie stabilną naukę modelu. Model trenowano  na karcie graficznej Nvidia RTX2070, skorzystano z szybkich operacji 16fp i trening trwał ponad 7 dni. Trenowany model był co kilka tysiecy kroków walidowany, co zostało zwizualizowane na rysunku~\ref{fig:facenet_train}.
 
 \begin{figure}[h]
   \centering
@@ -58,6 +82,32 @@ W celach pokazania, że implementacja jest poprawna porównujemy następujące m
   \caption{\fedavglong}%
   \label{fig:facenet_train}%
 \end{figure}
+
+Niestety nie udało sie odtworzyć wyników raportowanych przez autorów, którzy osiągneli
+\(\tar@\far=\num{0.001}\) wynoszący ponad \num{0.9}. Może to wynikać z
+\begin{itemize}
+    \item zbyt krótkiego czasu trenigu,
+    \item braku zbliżonego wielkością zbioru danych użytych do uzyskania raportowanych wyników.
+\end{itemize}
+
+Jeśli spekulowane powody porażki są prawdziwe to przeprowadzony eksperyment można uznać za sukces
+- implementacja jest poprawna, model się uczy jednak wymaga więcej czasu aby osiągnąć zbieżność.
+Co oznacza, że można pójść krok dalej i spróbować dotrenować ekstraktor cech stosująć podejście
+FL. Ze względu na wcześniej wspomniany brak dostępnych modeli FaceNet i braku możliwości
+wytrenowania takiego modelu samodzielnie będziemy musieli zdecydować się na dotrenowywanie
+innego, dostępnego, ekstraktora cech trenowanego inną metodą. Eksperymentowano z tym już w
+\cite{Arcface}, gdzie wstępnie wytrenowano model metodą ArcFace i pod koniec dodatkowo
+dotrenowano samą sieć CNN właśnie przy pomocy funkcji triple loss. Wyniki w
+tabeli~\ref{table:losscompare} pokazują, że można osiągnąć tą techniką bardzo dobre rezultaty.
+
+\subsection{Podsumowanie}
+W tym rozdziale został omówiany proces weryfikacji, został wybrany detektor twarzy oraz
+ekstraktor cech twarzy. Została podjęta próba implementacji wybranej metody wyznaczania
+embeddingów, która zakończyła się w pewien sposób sukcesem - nie udało się odtworzyć
+raportowanych wyników ale za to została pozytywnie zweryfikowana implementacja.
+
+Eksperymenty przeprowadzane w ten sekcji zostaną kontunuowane dalej w rozdziale~\ref{sec:fedfaceid}. Jednak przed tym zostanie po krótce omówiona idea Federated Learningu.
+
 
 %see this:
 %https://arxiv.org/pdf/1901.08616.pdf
